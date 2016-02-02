@@ -28,7 +28,7 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
-  def testValidateSimpleIncorrect(self):
+  def testValidateIncorrectArchitecture(self):
     s = {
       'architecture': 'foo',
       'language': 'c99',
