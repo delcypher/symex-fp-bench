@@ -21,20 +21,23 @@ properties:
   comments:
     # TODO: Is this flexible enough?
     type: string
-  defines:
-    # Maps a build name to a list of defines.
-    # Having multiple build names declares multiple versions
-    # of the benchmark (the full name is "<name>_<build_name>") that
+  variants:
+    # Maps a build variant name to a list of defines.
+    # Having multiple build variant names declares multiple variants
+    # of the benchmark (the full name is "<name>_<build_variant_name>") that
     # should each be built/verified with their own set of defines.
     # This provides a convenient way to reuse code between benchmarks
     # that have very minor variations (e.g. loop bound)
     type: object
     minProperties: 1
-    additionalProperties:
-      type: array
-      items:
-        type: string
-        pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
+    additionalProperties: false
+    patternProperties:
+      # The name of a build variant must match this pattern
+      "^[a-z0-9_-]+$":
+        type: array
+        items:
+          type: string
+          pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
   language:
     type: string
     enum:

@@ -114,7 +114,8 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'defines': { 'config1': ['FOO' 'BAR=BAZ', 'NUM=0'] },
+      'variants': { 'config1': ['FOO' 'BAR=BAZ', 'NUM=0'],
+                   'config2' : ['NUM=1']},
       'verification_tasks': [
         'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
     }
@@ -128,12 +129,29 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'defines': { 'config1': ['foo=bad value'] },
+      'variants': { 'config1': ['foo=bad value'] },
       'verification_tasks': [
         'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'foo=bad value' does not match"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateIncorrectBuildVariantName(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': { 'bad build variant name': ['FOO=1'] },
+      'verification_tasks': [
+        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Additional properties are not allowed \('bad build variant name'"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
