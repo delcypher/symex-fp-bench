@@ -1,0 +1,78 @@
+title: "SV-COMP benchmark description schema"
+description: |
+  This schema (written in YAML) describes a structued data format to be checked
+  by [json-schema](http://json-schema.org/). This data format (typically
+  written in YAML for convenience) describes enough information about a
+  benchmark for it to be both compiled and given to a verifier tool.
+# FIXME: What's the right way to do versioning of this schema?
+__version__: 0
+"$schema": "http://json-schema.org/draft-04/schema#"
+type: object
+properties:
+  architecture:
+    # FIXME: Although SV-COMP just says ILP32 an IP64
+    # we have benchmarks that are x86_64 specific. Being
+    # more specific about the intended architecture is one way to deal with this.
+    # Is there a better way to handle this?
+    type: string
+    enum:
+      - x86_64
+      - i686
+  comments:
+    # TODO: Is this flexible enough?
+    type: string
+  defines:
+    # Maps a build name to a list of defines.
+    # Having multiple build names declares multiple versions
+    # of the benchmark (the full name is "<name>_<build_name>") that
+    # should each be built/verified with their own set of defines.
+    # This provides a convenient way to reuse code between benchmarks
+    # that have very minor variations (e.g. loop bound)
+    type: object
+    minProperties: 1
+    additionalProperties:
+      type: array
+      items:
+        type: string
+        pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
+  language:
+    type: string
+    enum:
+      - c99
+      - c11
+      # GNU variants of the C standard
+      - gnu99
+      - gnu11
+  name:
+    type: string
+    pattern: "^[a-zA-Z0-9_.-]+$"
+  schema_version:
+    type: integer
+    minimum: 0
+  sources:
+    type: array
+    items:
+      type: string
+      minItems: 1
+      # Note windows slashes are not allowed
+      pattern: "^([a-z0-9A-Z_-]+\\/)*[a-zA-Z0-9_-]+\\.c$"
+  verification_tasks:
+    type: array
+    items:
+      # FIXME: This doesn't seem flexible enough and is fragile!
+      type: string
+      enum:
+        - "CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )"
+        - "CHECK( init(main()), LTL(G valid-free) )"
+        - "CHECK( init(main()), LTL(G valid-deref) )"
+        - "CHECK( init(main()), LTL(G valid-memtrack) )"
+        - "CHECK( init(main()), LTL(G ! overflow) )"
+        - "CHECK( init(main()), LTL(F end) )"
+      minItems: 1
+required:
+  - architecture
+  - language
+  - name
+  - sources
+  - schema_version
+  - verification_tasks
