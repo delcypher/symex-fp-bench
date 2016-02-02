@@ -44,6 +44,22 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateIncorrectLanguage(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c++11',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': [
+        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'c\+\+11' is not one of"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateIncorrectSchemaVersion(self):
     s = {
       'architecture': 'foo',
