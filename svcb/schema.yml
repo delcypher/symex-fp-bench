@@ -23,11 +23,13 @@ properties:
     type: string
   variants:
     # Maps a build variant name to a list of defines.
+    #
     # Having multiple build variant names declares multiple variants
     # of the benchmark (the full name is "<name>_<build_variant_name>") that
     # should each be built/verified with their own set of defines.
     # This provides a convenient way to reuse code between benchmarks
-    # that have very minor variations (e.g. loop bound)
+    # that have very minor variations (e.g. loop bound). Note that
+    # all sources defined in ``sources`` are used to build each variant
     type: object
     minProperties: 1
     additionalProperties: false
@@ -36,6 +38,7 @@ properties:
       "^[a-z0-9_-]+$":
         type: array
         items:
+          # These items are macro definitions
           type: string
           pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
   language:
