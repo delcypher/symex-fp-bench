@@ -76,7 +76,7 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
-  def testValidateIncorrectSoureFilePath(self):
+  def testValidateIncorrectSourceFilePath(self):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
@@ -87,6 +87,22 @@ class TestSchema(unittest.TestCase):
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'a bad name.c' does not match"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateIncorrectRelativeSourcePath(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['../a.c', 'b.c'],
+      'verification_tasks': [
+        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"not allowed for '\.\./a.c'"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):

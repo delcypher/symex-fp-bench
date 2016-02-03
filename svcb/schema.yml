@@ -54,8 +54,12 @@ properties:
     items:
       type: string
       minItems: 1
-      # Note windows slashes are not allowed
-      pattern: "^([a-z0-9A-Z_-]+\\/)*[a-zA-Z0-9_-]+\\.c$"
+      allOf:
+        # Note windows slashes are not allowed
+        - pattern: "^([a-z0-9A-Z_.-]+\\/)*[a-zA-Z0-9._-]+\\.c$"
+        # Disallow relative paths
+        - not:
+            pattern: "\\.\\.\\/"
   variants:
     # Maps a build variant name to a list of compiler macro definitions.
     #
