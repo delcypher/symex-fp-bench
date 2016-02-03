@@ -44,9 +44,11 @@ properties:
   language:
     type: string
     enum:
+      - c89
       - c99
       - c11
       # GNU variants of the C standard
+      - gnu89
       - gnu99
       - gnu11
   name:
