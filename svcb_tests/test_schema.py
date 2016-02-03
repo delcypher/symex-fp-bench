@@ -111,6 +111,37 @@ class TestSchema(unittest.TestCase):
   def testValidateSimpleWithDefines(self):
     s = {
       'architecture': 'x86_64',
+      'defines': ['FOO', 'BAR=0'],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': [
+        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleWithIncorrectDefines(self):
+    s = {
+      'architecture': 'x86_64',
+      'defines': ['badmacro name', 'BAR=0'],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': [
+        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex = r"'badmacro name' does not match"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleWithVariants(self):
+    s = {
+      'architecture': 'x86_64',
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
@@ -123,7 +154,7 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
-  def testValidateIncorrectDefine(self):
+  def testValidateIncorrectVariantDefine(self):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
