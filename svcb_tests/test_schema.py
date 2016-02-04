@@ -102,6 +102,50 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateEmptySources(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': [],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Failed validating 'minItems' in schema\['properties'\]\['sources'\]"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateMissingSources(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'sources' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateDuplicateSources(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c', 'a.c'],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"\['a.c', 'b.c', 'a.c'\] has non-unique elements"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateIncorrectName(self):
     s = {
       'architecture': 'x86_64',
