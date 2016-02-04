@@ -21,8 +21,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -34,8 +33,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'foo' is not one of"
@@ -50,8 +48,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c++11',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'c\+\+11' is not one of"
@@ -66,8 +63,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
       'schema_version': 123456
     }
     msgRegex= r"Schema version used by benchmark \(\d+\) does not match the currently support schema \(\d+\)"
@@ -82,8 +78,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a bad name.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'a bad name.c' does not match"
@@ -98,8 +93,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['../a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"not allowed for '\.\./a.c'"
@@ -114,8 +108,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'my bad benchmark name',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'my bad benchmark name' does not match"
@@ -131,8 +124,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -145,8 +137,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex = r"'badmacro name' does not match"
@@ -163,8 +154,7 @@ class TestSchema(unittest.TestCase):
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': ['FOO' 'BAR=BAZ', 'NUM=0'],
                    'config2' : ['NUM=1']},
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -177,8 +167,7 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': ['foo=bad value'] },
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'foo=bad value' does not match"
@@ -194,8 +183,7 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'bad build variant name': ['FOO=1'] },
-      'verification_tasks': [
-        'CHECK( init(main()), LTL(G ! call(__VERIFIER_error())) )'],
+      'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Additional properties are not allowed \('bad build variant name'"
@@ -204,4 +192,46 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateEmptyVerificationTask(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': [],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"\[\] is too short"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateMissingVerificationTask(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'verification_tasks' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateDuplicateVerificationTasks(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': ['no_reach_error_function', 'no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"has non-unique elements"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
