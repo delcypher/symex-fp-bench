@@ -19,6 +19,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -31,6 +32,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'foo',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -46,6 +48,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c++11',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -61,6 +64,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'foo',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -76,6 +80,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a bad name.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -91,6 +96,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['../a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -106,6 +112,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': [],
       'verification_tasks': ['no_reach_error_function'],
@@ -121,6 +128,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'verification_tasks': ['no_reach_error_function'],
     }
@@ -135,6 +143,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c', 'a.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -150,6 +159,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'my bad benchmark name',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -166,6 +176,7 @@ class TestSchema(unittest.TestCase):
       'architecture': 'x86_64',
       'defines': ['FOO', 'BAR=0'],
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -179,6 +190,7 @@ class TestSchema(unittest.TestCase):
       'architecture': 'x86_64',
       'defines': ['badmacro name', 'BAR=0'],
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function'],
@@ -195,6 +207,7 @@ class TestSchema(unittest.TestCase):
       'architecture': 'x86_64',
       'language': 'c99',
       'name': 'mybenchmark',
+      'memory_model': 'precise',
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': ['FOO' 'BAR=BAZ', 'NUM=0'],
                    'config2' : ['NUM=1']},
@@ -208,6 +221,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': ['foo=bad value'] },
@@ -224,6 +238,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'bad build variant name': ['FOO=1'] },
@@ -240,6 +255,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': [],
@@ -255,6 +271,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
     }
@@ -269,6 +286,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_error_function', 'no_reach_error_function'],
@@ -284,12 +302,44 @@ class TestSchema(unittest.TestCase):
     s = {
       'architecture': 'x86_64',
       'language': 'c99',
+      'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': ['no_reach_super_function'],
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'no_reach_super_function' is not one of"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateMissingMemoryModel(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'memory_model' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateInvalidMemoryModel(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'memory_model': 'trusty',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'trusty' is not one of"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
