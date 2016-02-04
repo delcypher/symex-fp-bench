@@ -344,3 +344,20 @@ class TestSchema(unittest.TestCase):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testUpgradeToLatestFromLatest(self):
+    s = {
+      'architecture': 'x86_64',
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    newBenchSpec = schema.upgradeBenchmarkSpecificationToSchema(s)
+    self.assertNotEqual(id(s), id(newBenchSpec))
+    self.assertEqual(s, newBenchSpec)
+    newBenchSpec = schema.upgradeBenchmarkSpecificationToSchema(s, self.persistentSchema)
+    self.assertNotEqual(id(s), id(newBenchSpec))
+    self.assertEqual(s, newBenchSpec)

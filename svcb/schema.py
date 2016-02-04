@@ -67,20 +67,42 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
 
   # Do additional sanity checks if necessary
 
-def upgradeBenchmarkSpecification(benchSpec, schema=None):
-  # TODO:
+def upgradeBenchmarkSpeciationToVersion(benchSpec, schemaVersion):
+  """
+    Upgrade a ``benchSpec`` to a particular schemaVersion. This
+    does not validate the ``benchSpec`` against the schema.
+  """
+  assert isinstance(benchSpec, dict)
+  assert isinstance(schemaVersion, int)
+  bsVersion = benchSpec['schema_version']
+  assert isinstance(bsVersion, int)
+  assert bsVersion >= 0
+  assert schemaVersion >= 0
   newBenchSpec = copy.deepcopy(benchSpec)
+
+  if bsVersion == schemaVersion:
+    # Nothing todo
+    return newBenchSpec
+  elif bsVersion > schemaVersion:
+    raise Exception('Cannot downgrade benchmark specification to older schema')
+
+  # TODO: Implement upgrade if we introduce new schema versions
+  # We would implement various upgrade functions (e.g. ``upgrade_0_to_1()``, ``upgrade_1_to_2()``)
+  # and call them successively until the ``benchSpec`` has been upgraded to the correct version.
+  raise NotImplementedException()
+
+def upgradeBenchmarkSpecificationToSchema(benchSpec, schema=None):
+  """
+    Upgrade a ``benchSpec`` to the specified ``schema``.
+    The resulting ``benchSpec`` is validated against that schema.
+  """
   if schema == None:
     schema = getSchema()
   assert '__version__' in schema
   assert 'schema_version' in benchSpec
 
-  if schema['__version__'] == benchSpec['schema_version']:
-    # Nothing to do
-    pass
-  else:
-    raise NotImplementedException()
+  newBenchSpec = upgradeBenchmarkSpeciationToVersion(benchSpec, schema['__version__'])
 
-  # Check the upgraded benchmark spec
+  # Check the upgraded benchmark spec against the schema
   validateBenchmarkSpecification(newBenchSpec, schema=schema)
   return newBenchSpec
