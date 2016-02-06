@@ -17,15 +17,32 @@ definitions:
       type: string
       pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
 properties:
-  architecture:
+  architectures:
     # FIXME: Although SV-COMP just says ILP32 an IP64
     # we have benchmarks that are x86_64 specific. Being
     # more specific about the intended architecture is one way to deal with this.
     # Is there a better way to handle this?
-    type: string
-    enum:
-      - x86_64
-      - i686
+    oneOf:
+      -
+        # List of specific architectures that this benchmark is expected
+        # to compile/verify under.
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+            - x86_64
+            - i686
+      -
+        # Indicates that the benchmark is expected to verify on any
+        # architecture with a compliant implementation of C and the C standard
+        # library (version specified by the ``language`` key) For a build
+        # system this means that it should try to build the benchmark for every
+        # architecture it can.
+        type: string
+        enum:
+          - any
   comments:
     # TODO: Is this flexible enough?
     type: string
@@ -124,7 +141,7 @@ properties:
         # infinite program execution.
         - "terminates"
 required:
-  - architecture
+  - architectures
   - language
   - memory_model
   - name

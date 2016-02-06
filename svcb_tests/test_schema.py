@@ -17,7 +17,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateSimpleCorrect(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'foo',
@@ -28,9 +28,38 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateSimpleAnyArch(self):
+    s = {
+      'architectures': 'any',
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateInvalidMixAnyAndOtherArch(self):
+    s = {
+      'architectures': ['any', 'x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': ['no_reach_error_function'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex = r"\['any', 'x86_64'\] is not valid under any of the given schemas"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateIncorrectArchitecture(self):
     s = {
-      'architecture': 'foo',
+      'architectures': ['foo'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -38,7 +67,7 @@ class TestSchema(unittest.TestCase):
       'verification_tasks': ['no_reach_error_function'],
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"'foo' is not one of"
+    msgRegex= r"\['foo'\] is not valid under any of the given schemas"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
@@ -46,7 +75,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateIncorrectLanguage(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c++11',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -78,7 +107,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateIncorrectSourceFilePath(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -94,7 +123,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateIncorrectRelativeSourcePath(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -110,7 +139,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateEmptySources(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -126,7 +155,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateMissingSources(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -141,7 +170,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateDuplicateSources(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -157,7 +186,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateIncorrectName(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'my bad benchmark name',
@@ -173,7 +202,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateSimpleWithDefines(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'defines': ['FOO', 'BAR=0'],
       'language': 'c99',
       'memory_model': 'precise',
@@ -187,7 +216,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateSimpleWithIncorrectDefines(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'defines': ['badmacro name', 'BAR=0'],
       'language': 'c99',
       'memory_model': 'precise',
@@ -204,7 +233,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateSimpleWithVariants(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'name': 'mybenchmark',
       'memory_model': 'precise',
@@ -219,7 +248,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateIncorrectVariantDefine(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -236,7 +265,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateIncorrectBuildVariantName(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -253,7 +282,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateEmptyVerificationTask(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -269,7 +298,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateMissingVerificationTask(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -284,7 +313,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateDuplicateVerificationTasks(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -300,7 +329,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateInvalidVerificationTask(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -316,7 +345,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateMissingMemoryModel(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
@@ -331,7 +360,7 @@ class TestSchema(unittest.TestCase):
 
   def testValidateInvalidMemoryModel(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'trusty',
       'name': 'mybenchmark',
@@ -347,7 +376,7 @@ class TestSchema(unittest.TestCase):
 
   def testUpgradeToLatestFromLatest(self):
     s = {
-      'architecture': 'x86_64',
+      'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'foo',
