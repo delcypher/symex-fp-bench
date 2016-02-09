@@ -40,6 +40,18 @@ set(SVCOMP_TARGET_X86_64_FLAGS "-m64")
 set(SVCOMP_TARGET_i686_FLAGS "-m32")
 
 ###############################################################################
+# Detect supported warning flags
+###############################################################################
+# FIXME: Do this properly
+set(SVCOMP_WARNING_FLAGS
+    -Wall
+    -Werror=main
+    -Werror=implicit
+   )
+# Set flags globally
+add_compile_options(${SVCOMP_WARNING_FLAGS})
+
+###############################################################################
 # Add add_svcomp_benchmark() macro
 ###############################################################################
 include(cmake/add_svcomp_benchmark.cmake)
