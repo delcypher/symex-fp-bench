@@ -50,6 +50,15 @@ include(cmake/add_svcomp_benchmark.cmake)
 add_subdirectory(lib)
 
 ###############################################################################
+# Python tests
+###############################################################################
+add_custom_target(check-svcb ALL
+                  COMMAND ${PYTHON_EXECUTABLE} -m unittest discover
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  COMMENT "Running svcb unit tests"
+                 )
+
+###############################################################################
 # Benchmarks
 ###############################################################################
 add_subdirectory(benchmarks)
