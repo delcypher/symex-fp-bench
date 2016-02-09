@@ -33,7 +33,7 @@ $ cmake ../
 make check-svcb
 ```
 
-# Buidling benchmarks
+# Building benchmarks
 
 ```
 make
