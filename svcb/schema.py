@@ -26,6 +26,13 @@ def getSchema():
   assert '__version__' in schema
   return schema
 
+def getAllArchitectures(schema=None):
+  if schema == None:
+    schema = getSchema()
+  possibleValues = schema['properties']['architectures']['oneOf'][0]['items']['enum']
+  return set(possibleValues)
+
+
 def validateBenchmarkSpecification(benchSpec, schema=None):
   """
     Validate a benchmark specification ``benchSpec``.

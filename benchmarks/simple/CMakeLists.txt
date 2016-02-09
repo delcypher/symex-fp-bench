@@ -1,0 +1,1 @@
+add_svcomp_benchmark(variants)

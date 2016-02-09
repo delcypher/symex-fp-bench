@@ -1,12 +1,11 @@
-architectures:
-  - x86_64
+architectures: any
 language: c99
 memory_model: precise
 name: variant_demo
 schema_version: 0
 sources:
   - main.c
-  - loop.c
+  - triangle_number.c
 variants:
   small_loop:
     - 'LOOP_BOUND=10'

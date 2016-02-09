@@ -27,6 +27,24 @@ find_package(PythonInterp REQUIRED)
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
 ###############################################################################
+# Setup variables used by auto generated CMake files
+###############################################################################
+# FIXME: Detect these and set them
+set(SVCOMP_STD_C89 "-std=c89")
+set(SVCOMP_STD_C99 "-std=c99")
+set(SVCOMP_STD_C11 "-std=c11")
+set(SVCOMP_STD_GNUC89 "-std=gnu89")
+set(SVCOMP_STD_GNUC99 "-std=gnu99")
+set(SVCOMP_STD_GNUC11 "-std=gnu11")
+set(SVCOMP_TARGET_X86_64_FLAGS "-m64")
+set(SVCOMP_TARGET_i686_FLAGS "-m32")
+
+###############################################################################
+# Add add_svcomp_benchmark() macro
+###############################################################################
+include(cmake/add_svcomp_benchmark.cmake)
+
+###############################################################################
 # Runtime libraries
 ###############################################################################
 add_subdirectory(lib)
