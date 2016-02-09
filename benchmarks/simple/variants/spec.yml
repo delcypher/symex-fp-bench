@@ -1,0 +1,16 @@
+architectures:
+  - x86_64
+language: c99
+memory_model: precise
+name: variant_demo
+schema_version: 0
+sources:
+  - main.c
+  - loop.c
+variants:
+  small_loop:
+    - 'LOOP_BOUND=10'
+  big_loop:
+    - 'LOOP_BOUND=100'
+verification_tasks:
+  - no_reach_error_function
