@@ -19,6 +19,14 @@ The schema for these benchmark specification files is written using
 
 Please note that the schema currently isn't finalised
 
+# Getting started
+
+```
+$ mkdir build
+$ cd build
+$ cmake ../
+```
+
 # Running schema tests
 
 ```
@@ -27,4 +35,6 @@ make check-svcb
 
 # Buidling benchmarks
 
-TODO
+```
+make
+```
