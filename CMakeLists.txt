@@ -3,7 +3,12 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/c_flags_ov
 project(SVCOMP_C_BENCHMARKS LANGUAGES C)
 cmake_minimum_required(VERSION 2.8.12)
 
-# TODO: Detect target(S) supported by compiler
+# Detect target supported by compiler
+include(${CMAKE_SOURCE_DIR}/cmake/target_arch_detect.cmake)
+detect_target_architecture(SVCOMP_ARCHITECTURE)
+if (NOT SVCOMP_ARCHITECTURE)
+  message(FATAL_ERROR "Failed to detect target architecture")
+endif()
 
 # TODO: Setup warning flags
 
@@ -36,8 +41,6 @@ set(SVCOMP_STD_C11 "-std=c11")
 set(SVCOMP_STD_GNUC89 "-std=gnu89")
 set(SVCOMP_STD_GNUC99 "-std=gnu99")
 set(SVCOMP_STD_GNUC11 "-std=gnu11")
-set(SVCOMP_TARGET_X86_64_FLAGS "-m64")
-set(SVCOMP_TARGET_i686_FLAGS "-m32")
 
 ###############################################################################
 # Detect supported warning flags

@@ -2,7 +2,7 @@ from . import benchmark
 from . import schema
 import os
 
-def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitectures={ }):
+def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
   """
     Returns a string containing CMake declarations
     that declare the benchmarks in the list ``benchmarkObjs``.
@@ -15,23 +15,24 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitectures={ })
     assert isinstance(b.name, str)
     assert isinstance(b, benchmark.Benchmark)
 
+    benchmarkArchitectures = None
     if isinstance(b.architectures, str):
       assert b.architectures == 'any'
-      architectures = schema.getAllArchitectures()
+      benchmarkArchitectures = {'any'}
     else:
-      architectures = set(b.architectures)
+      benchmarkArchitectures = b.architectures
 
-    for arch in architectures:
+    for arch in benchmarkArchitectures:
       declStr += "####\n"
       targetName = '{}.{}'.format(b.name, arch)
-      if arch != 'any' and arch not in supportedArchitectures:
+      if arch != 'any' and arch != supportedArchitecture:
         # Architecture not supported
-        declStr += 'message(WARNING "Compiler cannot build target {}")\n'.format(targetName)
+        declStr += 'message(STATUS "Compiler cannot build target {}")\n'.format(targetName)
         continue
 
       # Emit ``add_executable()``
       declStr += "add_executable({target_name}\n".format(target_name=targetName)
-      # FIXME: Need to but in absolute path
+      # FIXME: Need to put in absolute path
       for source in b.sources:
         declStr += "  {source_file}\n".format(source_file=os.path.join(sourceRootDir, source))
       declStr += ")\n"
@@ -48,7 +49,7 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitectures={ })
           declStr += "  {}\n".format(macroDefine)
         declStr += ")\n"
       # Emit compiler flags
-      declStr += "target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}} ${{SVCOMP_TARGET_{arch}_FLAGS}})\n".format(
+      declStr += "target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(
         target_name=targetName,
         lang_ver=b.language.upper(),
         arch = arch.upper()

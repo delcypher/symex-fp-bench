@@ -19,22 +19,26 @@ The schema for these benchmark specification files is written using
 
 Please note that the schema currently isn't finalised
 
-# Getting started
+# Building 64-bit benchmarks
 
 ```
-$ mkdir build
-$ cd build
-$ cmake ../
+$ mkdir build64
+$ cd build64
+$ CFLAGS="-m64" cmake ../
+$ make
+```
+
+# Building 32-bit benchmarks
+
+```
+$ mkdir build32
+$ cd build32
+$ CFLAGS="-m32" cmake ../
+$ make
 ```
 
 # Running schema tests
 
 ```
 make check-svcb
-```
-
-# Building benchmarks
-
-```
-make
 ```

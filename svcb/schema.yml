@@ -54,9 +54,7 @@ properties:
       -
         # Indicates that the benchmark is expected to verify on any
         # architecture with a compliant implementation of C and the C standard
-        # library (version specified by the ``language`` key) For a build
-        # system this means that it should try to build the benchmark for every
-        # architecture it can.
+        # library (version specified by the ``language`` key).
         type: string
         enum:
           - any

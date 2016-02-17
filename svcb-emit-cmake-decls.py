@@ -27,6 +27,8 @@ def main(args):
   parser.add_argument('bench_spec_file',
                       help='Benchmark specification file',
                       type=argparse.FileType('r'))
+  parser.add_argument('--architecture', type=str, required=True,
+                      choices=['x86_64', 'i686', 'unknown'])
   parser.add_argument('-o', '--output',
                       type=argparse.FileType('w'),
                       default=sys.stdout,
@@ -56,7 +58,7 @@ def main(args):
   # FIXME: Get CMake to pass us the architectures it knows the compiler can build for
   cmakeDeclStr = svcb.build.generateCMakeDecls(benchmarkObjs,
                                                sourceRootDir=sourceFileDirectory,
-                                               supportedArchitectures={'x86_64'})
+                                               supportedArchitecture=pArgs.architecture)
   pArgs.output.write(cmakeDeclStr)
 
 if __name__ == '__main__':
