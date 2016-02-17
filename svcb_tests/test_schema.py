@@ -22,7 +22,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -35,7 +35,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -48,7 +48,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex = r"\['any', 'x86_64'\] is not valid under any of the given schemas"
@@ -64,7 +64,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"\['foo'\] is not valid under any of the given schemas"
@@ -80,7 +80,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'c\+\+11' is not one of"
@@ -96,7 +96,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
       'schema_version': 123456
     }
     msgRegex= r"Schema version used by benchmark \(\d+\) does not match the currently support schema \(\d+\)"
@@ -112,7 +112,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a bad name.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'a bad name.c' does not match"
@@ -128,7 +128,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['../a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"not allowed for '\.\./a.c'"
@@ -144,7 +144,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': [],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Failed validating 'minItems' in schema\['properties'\]\['sources'\]"
@@ -159,7 +159,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'sources' is a required property"
@@ -175,7 +175,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c', 'a.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"\['a.c', 'b.c', 'a.c'\] has non-unique elements"
@@ -191,7 +191,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'my bad benchmark name',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'my bad benchmark name' does not match"
@@ -208,7 +208,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -222,7 +222,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex = r"'badmacro name' does not match"
@@ -240,7 +240,7 @@ class TestSchema(unittest.TestCase):
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': ['FOO' 'BAR=BAZ', 'NUM=0'],
                    'config2' : ['NUM=1']},
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -254,7 +254,7 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': ['foo=bad value'] },
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'foo=bad value' does not match"
@@ -271,7 +271,7 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'bad build variant name': ['FOO=1'] },
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Additional properties are not allowed \('bad build variant name'"
@@ -287,10 +287,10 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': [],
+      'verification_tasks': {},
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"\[\] is too short"
+    msgRegex= r"Failed validating 'minProperties' in schema\['properties'\]\['verification_tasks'\]"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
@@ -311,17 +311,88 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
-  def testValidateDuplicateVerificationTasks(self):
+  def testValidateEmptyMissingCorrectness(self):
     s = {
       'architectures': ['x86_64'],
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function', 'no_reach_error_function'],
+      'verification_tasks': {'no_reach_error_function': {}},
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"has non-unique elements"
+    msgRegex= r"'correct' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateInvalidCorrectnessType(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {'no_reach_error_function': {'correct': 'XXX'}},
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'XXX' is not valid under any of the given schemas"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateTrueCorrectness(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {'no_reach_error_function': {'correct': True}},
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateFalseCorrectness(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {'no_reach_error_function': {'correct': False}},
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateUnknownCorrectness(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {'no_reach_error_function': {'correct': None}},
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateAdditionalVerificationTaskProperty(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {'no_reach_error_function': {'correct': True, 'crazy': True}},
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Additional properties are not allowed \('crazy' was unexpected\)"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
@@ -334,10 +405,10 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_super_function'],
+      'verification_tasks': {'no_reach_super_function': {'correct': False}},
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"'no_reach_super_function' is not one of"
+    msgRegex= r"Additional properties are not allowed \('no_reach_super_function' was unexpected\)"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
@@ -349,7 +420,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'memory_model' is a required property"
@@ -365,7 +436,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'trusty',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'trusty' is not one of"
@@ -381,7 +452,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': ['no_reach_error_function'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     newBenchSpec = schema.upgradeBenchmarkSpecificationToSchema(s)

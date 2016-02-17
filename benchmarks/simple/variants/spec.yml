@@ -12,4 +12,5 @@ variants:
   big_loop:
     - 'LOOP_BOUND=100'
 verification_tasks:
-  - no_reach_error_function
+  no_reach_error_function:
+    correct: true
