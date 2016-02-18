@@ -10,8 +10,6 @@ if (NOT SVCOMP_ARCHITECTURE)
   message(FATAL_ERROR "Failed to detect target architecture")
 endif()
 
-# TODO: Setup warning flags
-
 ###############################################################################
 # Set default project BUILD_TYPE
 ###############################################################################
