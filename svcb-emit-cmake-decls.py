@@ -55,7 +55,6 @@ def main(args):
 
   benchmarkObjs = svcb.benchmark.getBenchmarks(benchSpec)
   _logger.debug('Found {} benchmark(s)'.format(len(benchmarkObjs)))
-  # FIXME: Get CMake to pass us the architectures it knows the compiler can build for
   cmakeDeclStr = svcb.build.generateCMakeDecls(benchmarkObjs,
                                                sourceRootDir=sourceFileDirectory,
                                                supportedArchitecture=pArgs.architecture)
