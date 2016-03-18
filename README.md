@@ -42,3 +42,17 @@ $ make
 ```
 make check-svcb
 ```
+
+# SV-COMP runtime library
+
+A small runtime library is provided which has two goals:
+
+* Provide the SV-COMP symbols for compiled benchmarks to link against
+* Provide very basic replay capabilities
+
+The runtime library declarations can be found in
+[include/svcomp.h](include/svcomp.h) and the definitions can be found in
+[lib/svcomp_runtime/](lib/svcomp_runtime). The implementation doesn't currently
+allow for proper replay but future work could implement something that would
+allow the values returned by the ``__VERIFIER_nondet_*()`` functions to be
+controlled.
