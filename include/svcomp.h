@@ -77,7 +77,7 @@ SVCOMP_NONDET_DECL_D(ushort, unsigned short)
  */
 void __VERIFIER_assume(int expression);
 
-/*! \brief Assert ``cond`` is true.
+/*! \brief Assert ``expression`` is true.
  *
  *  A verification tool can assume the following implemention:
  *  ```
