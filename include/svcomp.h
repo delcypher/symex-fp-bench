@@ -1,5 +1,14 @@
 /*! \file svcomp.h
  * \brief Declaration of SV-COMP runtime functions
+ *
+ * \details
+ * This file declares the functions that can used by the SV-COMP C benchmarks.
+ * Their purpose is provide functions useful for verification.
+ *
+ * The semantics of each function are defined below. Note that no implementation
+ * of these functions are provided for verifiers. Although an implementation
+ * can be found in ``lib/svcomp_runtime/``, this is just a stub implementation
+ * for the build system.
  */
 #include <stdint.h>
 #include <stddef.h>
