@@ -1,3 +1,6 @@
+/*! \file svcomp.h
+ * \brief Declaration of SV-COMP runtime functions
+ */
 #include <stdint.h>
 #include <stddef.h>
 
