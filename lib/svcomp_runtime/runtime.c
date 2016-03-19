@@ -57,7 +57,7 @@ void __VERIFIER_assert(int expression) {
   }
 }
 
-__attribute__ ((__noreturn__)) void __VERIFIER_error() {
+SVCOMP_NO_RETURN void __VERIFIER_error() {
   fprintf(stderr, "__VERIFIER_error(): Called\n");
   abort();
 }

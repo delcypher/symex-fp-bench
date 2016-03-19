@@ -1,6 +1,16 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef __has_attribute
+  #define __has_attribute(x) 0  // Compatibility with non gcc/clang compilers.
+#endif
+
+#if __has_attribute(__noreturn__)
+#define SVCOMP_NO_RETURN  __attribute__((__noreturn__))
+#else
+#define SVCOMP_NO_RETURN
+#endif
+
 // Functions that return non-determinstic values of a particular type
 #define SVCOMP_NONDET_DECL_D(NAME,T) \
   /*! \brief Return a non-determinisic value of type T
@@ -92,7 +102,7 @@ void __VERIFIER_assert(int expression);
  * the program terminates.
  *
  */
-__attribute__ ((__noreturn__)) void __VERIFIER_error();
+SVCOMP_NO_RETURN void __VERIFIER_error();
 
 /*! \brief Begin atomic section
  *
