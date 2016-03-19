@@ -3,6 +3,15 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/c_flags_ov
 project(SVCOMP_C_BENCHMARKS LANGUAGES C)
 cmake_minimum_required(VERSION 2.8.12)
 
+###############################################################################
+# Set useful variables depending on CMake version
+###############################################################################
+if (("${CMAKE_VERSION}" VERSION_EQUAL "3.2") OR ("${CMAKE_VERSION}" VERSION_GREATER "3.2"))
+  # In CMake >= 3.2 add_custom_command() supports a ``USES_TERMINAL`` argument
+  set(ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG "USES_TERMINAL")
+else()
+  set(ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG "")
+endif()
 # Detect target supported by compiler
 include(${CMAKE_SOURCE_DIR}/cmake/target_arch_detect.cmake)
 detect_target_architecture(SVCOMP_ARCHITECTURE)
@@ -28,6 +37,14 @@ find_package(PythonInterp REQUIRED)
 # Setup global include directory
 ###############################################################################
 include_directories("${CMAKE_SOURCE_DIR}/include")
+
+###############################################################################
+# Documentation
+###############################################################################
+option(BUILD_DOCS "Build documentation" ON)
+if (BUILD_DOCS)
+  add_subdirectory(docs)
+endif()
 
 ###############################################################################
 # Setup variables used by auto generated CMake files

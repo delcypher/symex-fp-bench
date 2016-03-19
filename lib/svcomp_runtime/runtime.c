@@ -43,15 +43,15 @@ SVCOMP_NONDET_DEFN_D(ulong, unsigned long)
 SVCOMP_NONDET_DEFN(unsigned)
 SVCOMP_NONDET_DEFN_D(ushort, unsigned short)
 
-void __VERIFIER_assume(int condition) {
-  if (!condition) {
+void __VERIFIER_assume(int expression) {
+  if (!expression) {
     fprintf(stderr, "__VERIFIER_assume(): Assumption not met. Exiting\n");
     exit(0);
   }
 }
 
-void __VERIFIER_assert(int cond) {
-  if (!cond) {
+void __VERIFIER_assert(int expression) {
+  if (!expression) {
     fprintf(stderr, "__VERIFIER_assert(): Assertion failed\n");
     __VERIFIER_error();
   }

@@ -3,6 +3,18 @@
 
 // Functions that return non-determinstic values of a particular type
 #define SVCOMP_NONDET_DECL_D(NAME,T) \
+  /*! \brief Return a non-determinisic value of type T
+   \details
+   This function is used to model nondeterministic values of type T.
+   This function has no side-effects. Verification tools can assume
+   the following implementation: \n\n
+   ```
+   T __VERIFIER_nondet_ ##  NAME() {
+      T val;
+      return val;
+   }
+   ```
+   */ \
   T __VERIFIER_nondet_ ## NAME();
 
 #define SVCOMP_NONDET_DECL(NAME) SVCOMP_NONDET_DECL_D(NAME,NAME)
@@ -32,9 +44,76 @@ SVCOMP_NONDET_DECL_D(ushort, unsigned short)
 #undef SVCOMP_NONDET_D_DECL
 #undef SVCOMP_NONDET_DECL
 
-// TODO: Provide doxygen documentation
-void __VERIFIER_assume(int condition);
-void __VERIFIER_assert(int cond);
+
+/*! \brief Assume an ``expression`` to be true.
+ *
+ * A verification tool can assume that a function call
+ * ``__VERIFIER_assume(expression)`` has the following meaning: If 'expression' is
+ * evaluated to '0', then the function loops forever, otherwise the function
+ * returns (no side effects). The verification tool can assume the following
+ * implementation:
+ * ```
+ * void __VERIFIER_assume(int expression) {
+ *   if (!expression) {
+ *     LOOP: goto LOOP;
+ *   };
+ *   return;
+ * }
+ * ```
+ * \param expression expression to assume
+ */
+void __VERIFIER_assume(int expression);
+
+/*! \brief Assert ``cond`` is true.
+ *
+ *  A verification tool can assume the following implemention:
+ *  ```
+ *   void __VERIFIER_assert(int expression) {
+ *     if (!expression) {
+ *        __VERIFIER_error();
+ *     }
+ *  }
+ *  ```
+ *  \param expression The expression to assert
+ */
+void __VERIFIER_assert(int expression);
+
+
+/*! \brief For checking (un)reachability.
+ *
+ * The verification tool can assume the following implementation:
+ * ```
+ * void __VERIFIER_error() {
+ *   abort();
+ * }
+ * ```
+ *
+ * Hence, a call to this function never returns and in this function
+ * the program terminates.
+ *
+ */
 __attribute__ ((__noreturn__)) void __VERIFIER_error();
+
+/*! \brief Begin atomic section
+ *
+ * For modeling an atomic execution of a sequence of statements in a
+ * multi-threaded run-time environment, those statements can be placed between two
+ * function calls __VERIFIER_atomic_begin() and __VERIFIER_atomic_end()
+ *
+ * Verifiers should assume that the execution between those calls is not
+ * interrupted. The two calls need to occur within the same control-flow block;
+ * nesting or interleaving of those function calls is not allowed.
+ */
 void __VERIFIER_atomic_begin();
+
+/*! \brief End atomic section
+ *
+ * For modeling an atomic execution of a sequence of statements in a
+ * multi-threaded run-time environment, those statements can be placed between two
+ * function calls __VERIFIER_atomic_begin() and __VERIFIER_atomic_end()
+ *
+ * Verifiers should assume that the execution between those calls is not
+ * interrupted. The two calls need to occur within the same control-flow block;
+ * nesting or interleaving of those function calls is not allowed.
+ */
 void __VERIFIER_atomic_end();
