@@ -9,3 +9,6 @@ sources:
 verification_tasks:
   no_reach_error_function:
     correct: true
+comments: |
+  This benchmark checks that an unsigned 64-bit integer
+  correctly overflows.

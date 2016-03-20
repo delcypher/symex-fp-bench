@@ -28,6 +28,20 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateSimpleCorrectWithComments(self):
+    s = {
+      'architectures': ['x86_64'],
+      'comments': 'simple comment',
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateSimpleAnyArch(self):
     s = {
       'architectures': 'any',
@@ -445,6 +459,23 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateInvalidComment(self):
+    s = {
+      'architectures': ['x86_64'],
+      'comments': ['comment1', 'comment2'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"nFailed validating 'type' in schema\['properties'\]\['comments'\]"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testUpgradeToLatestFromLatest(self):
     s = {
       'architectures': ['x86_64'],
@@ -461,3 +492,20 @@ class TestSchema(unittest.TestCase):
     newBenchSpec = schema.upgradeBenchmarkSpecificationToSchema(s, self.persistentSchema)
     self.assertNotEqual(id(s), id(newBenchSpec))
     self.assertEqual(s, newBenchSpec)
+
+  def testValidateAdditionalProperty(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'foo_bar': 'bar',
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Additional properties are not allowed \('foo_bar' was unexpected\)"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)

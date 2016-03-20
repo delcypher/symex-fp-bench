@@ -33,6 +33,7 @@ definitions:
     additionalProperties: false
     required:
       - correct
+additionalProperties: false
 properties:
   architectures:
     # FIXME: Although SV-COMP just says ILP32 an IP64
