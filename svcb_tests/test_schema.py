@@ -1,8 +1,17 @@
 import svcb
 from svcb import schema
 import unittest
+import sys
 
 class TestSchema(unittest.TestCase):
+  # There is an API change between Python 3.1
+  # and prior versions. This declaration adds
+  # the new name of the method for older versions
+  # of Python.
+  if sys.version_info < (3,1):
+    def assertRaisesRegex(self, *pargs,**kargs):
+      return self.assertRaisesRegexp(*pargs,**kargs)
+
   def setUp(self):
     self.persistentSchema = schema.getSchema()
 
@@ -470,7 +479,7 @@ class TestSchema(unittest.TestCase):
       'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"nFailed validating 'type' in schema\['properties'\]\['comments'\]"
+    msgRegex= r"Failed validating 'type' in schema\['properties'\]\['comments'\]"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):

@@ -13,6 +13,9 @@ class BenchmarkSpecificationValidationError(Exception):
     self.message = message
     self.absoluteSchemaPath = absoluteSchemaPath
 
+  def __str__(self):
+    return self.message
+
 def getSchema():
   """
     Return the Schema for SV-COMP benchmark specification
