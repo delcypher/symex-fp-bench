@@ -32,6 +32,11 @@ message(STATUS "CMAKE_BUILD_TYPE:${CMAKE_BUILD_TYPE}")
 # Find Python
 ###############################################################################
 find_package(PythonInterp REQUIRED)
+if ("${PYTHON_VERSION_STRING}" VERSION_LESS "2.7.0")
+  message(FATAL_ERROR "Detected version of Python is too old (need >= 2.7)."
+    " You can pass -DPYTHON_EXECUTABLE=/path/python to use a different version"
+    " of Python")
+endif()
 
 ###############################################################################
 # Setup global include directory
