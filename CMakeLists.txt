@@ -1,6 +1,6 @@
 # This overrides the default flags for the different CMAKE_BUILD_TYPEs
 set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/c_flags_override.cmake")
-project(SVCOMP_C_BENCHMARKS LANGUAGES C)
+project(SVCOMP_C_BENCHMARKS LANGUAGES C CXX)
 cmake_minimum_required(VERSION 2.8.12)
 
 ###############################################################################
@@ -61,6 +61,14 @@ set(SVCOMP_STD_C11 "-std=c11")
 set(SVCOMP_STD_GNUC89 "-std=gnu89")
 set(SVCOMP_STD_GNUC99 "-std=gnu99")
 set(SVCOMP_STD_GNUC11 "-std=gnu11")
+set(SVCOMP_STD_CXX98 "-std=c++98")
+set(SVCOMP_STD_CXX03 "-std=c++03")
+set(SVCOMP_STD_CXX11 "-std=c++11")
+set(SVCOMP_STD_CXX14 "-std=c++14")
+set(SVCOMP_STD_GNUCXX98 "-std=gnu++98")
+set(SVCOMP_STD_GNUCXX03 "-std=gnu++03")
+set(SVCOMP_STD_GNUCXX11 "-std=gnu++11")
+set(SVCOMP_STD_GNUCXX14 "-std=gnu++14")
 
 ###############################################################################
 # Detect supported warning flags

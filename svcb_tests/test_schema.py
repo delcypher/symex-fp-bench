@@ -99,14 +99,14 @@ class TestSchema(unittest.TestCase):
   def testValidateIncorrectLanguage(self):
     s = {
       'architectures': ['x86_64'],
-      'language': 'c++11',
+      'language': 'c++97',
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"'c\+\+11' is not one of"
+    msgRegex= r"'c\+\+97' is not one of"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):

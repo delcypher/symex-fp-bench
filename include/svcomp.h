@@ -23,6 +23,10 @@
 #define SVCOMP_NO_RETURN
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Functions that return non-determinstic values of a particular type
 #define SVCOMP_NONDET_DECL_D(NAME,T) \
   /*! \brief Return a non-determinisic value of type T
@@ -43,7 +47,11 @@
 
 // FIXME: Decide how to handle commented out types
 
+#ifdef __cplusplus
+SVCOMP_NONDET_DECL(bool)
+#else
 SVCOMP_NONDET_DECL_D(bool,_Bool)
+#endif
 SVCOMP_NONDET_DECL(char)
 SVCOMP_NONDET_DECL(double)
 SVCOMP_NONDET_DECL(float)
@@ -139,3 +147,7 @@ void __VERIFIER_atomic_begin();
  * nesting or interleaving of those function calls is not allowed.
  */
 void __VERIFIER_atomic_end();
+
+#ifdef __cplusplus
+}
+#endif

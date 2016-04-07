@@ -49,9 +49,10 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
           declStr += "  {}\n".format(macroDefine)
         declStr += ")\n"
       # Emit compiler flags
+      lang_ver = b.language.replace('+','X').upper()
       declStr += "target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(
         target_name=targetName,
-        lang_ver=b.language.upper(),
+        lang_ver= lang_ver,
         arch = arch.upper()
       )
   return declStr

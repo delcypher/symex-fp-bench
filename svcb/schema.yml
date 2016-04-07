@@ -72,10 +72,19 @@ properties:
       - c89
       - c99
       - c11
+      - c++98
+      - c++03
+      - c++11
+      - c++14
       # GNU variants of the C standard
       - gnu89
       - gnu99
       - gnu11
+      # GNU variants of the C++ standard
+      - gnu++98
+      - gnu++03
+      - gnu++11
+      - gnu++14
   memory_model:
     type: string
     enum:
@@ -95,7 +104,7 @@ properties:
       type: string
       allOf:
         # Note windows slashes are not allowed
-        - pattern: "^([a-z0-9A-Z_.-]+\\/)*[a-zA-Z0-9._-]+\\.c$"
+        - pattern: "^([a-z0-9A-Z_.-]+\\/)*[a-zA-Z0-9._-]+\\.(c|cpp)$"
         # Disallow relative paths
         - not:
             pattern: "\\.\\.\\/"
