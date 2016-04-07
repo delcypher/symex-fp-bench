@@ -65,3 +65,20 @@ The runtime library declarations can be found in
 allow for proper replay but future work could implement something that would
 allow the values returned by the ``__VERIFIER_nondet_*()`` functions to be
 controlled.
+
+# Building documentation
+
+To build documentation you will need [Doxygen](www.doxygen.org) installed and when CMake is invoked
+building the documentation should be enabled by doing something like this:
+
+```
+cmake -DBUILD_DOCS=ON -DBUILD_DOXYGEN_DOCS=ON /path/to/project/root
+```
+
+You can then build and view the documentation by running
+
+
+```
+make docs
+chromium docs/html/index.html
+```
