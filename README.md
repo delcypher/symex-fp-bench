@@ -1,7 +1,7 @@
 # SV-COMP benchmark build mock up
 
 This repository contains a draft design for organising and building
-SV-COMP's C benchmarks.
+SV-COMP's C and C++ benchmarks.
 
 In this system each benchmark is placed in its own folder containings
 
