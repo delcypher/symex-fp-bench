@@ -1,5 +1,6 @@
 import copy
 import pprint
+import re
 
 class Benchmark(object):
   def __init__(self, data):
@@ -44,6 +45,12 @@ class Benchmark(object):
   @property
   def dependencies(self):
     return self._data['dependencies']
+
+  def isLanguageC(self):
+    return not self.isLanguageCXX()
+
+  def isLanguageCXX(self):
+    return self.language.find('++') != -1
 
 def getBenchmarks(benchSpec):
   assert isinstance(benchSpec, dict)

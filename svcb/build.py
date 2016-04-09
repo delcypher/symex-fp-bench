@@ -1,6 +1,9 @@
 from . import benchmark
 from . import schema
+import logging
 import os
+
+_logger = logging.getLogger(__name__)
 
 cmakeIndent = "  "
 def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
@@ -84,7 +87,7 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
 else()
 {indent}set(msgConcat "")
 {indent}foreach (msg ${{DISABLED_TARGET_REASONS}})
-{indent}{indent}set(msgConcat "${{msgConcat}}\n  ${{msg}}")
+{indent}{indent}set(msgConcat "${{msgConcat}}\\n  ${{msg}}")
 {indent}endforeach()
 {indent}message(WARNING "Not building target {target} due to ${{msgConcat}}")
 {indent}unset(msgConcat)
@@ -98,9 +101,28 @@ def generate_dependency_decls(benchmarkObj, targetName, enableTargetCMakeVariabl
   """
   decls = []
   for depName, info in benchmarkObj.dependencies.items():
+    decl = None
     if depName == 'pthreads':
-      decl = generate_pthreads_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable)
-      decls.append(decl)
+      decl = generate_pthreads_dependency_code(
+        info,
+        targetName,
+        enableTargetCMakeVariable,
+        disabledTargetReasonsCMakeVariable
+      )
+    elif depName == 'openmp':
+      decl = generate_openmp_dependency_code(
+        info,
+        targetName,
+        enableTargetCMakeVariable,
+        disabledTargetReasonsCMakeVariable,
+        benchmarkObj
+      )
+    else:
+      msg = 'Unhandled benchmark dependency "{}"'.format(depName)
+      _logger.error(msg)
+      # FIXME: Should use our own exception type here
+      raise Exception(msg)
+    decls.append(decl)
   return decls
 
 def generate_pthreads_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
@@ -114,4 +136,31 @@ endif()
       disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
       indent=cmakeIndent)
   addDepDecl = "{indent}target_link_libraries({targetName} PRIVATE ${{CMAKE_THREAD_LIBS_INIT}})\n".format(indent=cmakeIndent, targetName=targetName)
+  return (guardDecl, addDepDecl)
+
+def generate_openmp_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable, benchmarkObj):
+  guardDecl = """
+if (NOT OPENMP_FOUND)
+{indent}set({enableTargetCMakeVariable} FALSE)
+{indent}list(APPEND {disabledTargetReasonsCMakeVariable} "OpenMP not available")
+endif()
+  \n""".format(enableTargetCMakeVariable=enableTargetCMakeVariable,
+      disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
+      indent=cmakeIndent)
+
+  addDepDecl = """
+{indent}target_compile_options({targetName} PRIVATE $<$<COMPILE_LANGUAGE:C>:${{OpenMP_C_FLAGS}}>)
+{indent}target_compile_options({targetName} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${{OpenMP_CXX_FLAGS}}>)
+  \n""".format(targetName=targetName, indent=cmakeIndent)
+
+  # FIXME: I can't find a nice way to have CMake determine the linker language.
+  # Reading the LINKER_LANGUAGE property of a target doesn't seem to work so use
+  # our knowledge of the benchmark to determine the language
+  if benchmarkObj.isLanguageC():
+    addDepDecl +="{indent}set_property(TARGET {targetName} APPEND_STRING PROPERTY LINK_FLAGS \" ${{OpenMP_C_FLAGS}}\")\n".format(targetName=targetName, indent=cmakeIndent)
+  elif benchmarkObj.isLanguageCXX():
+    addDepDecl +="{indent}set_property(TARGET {targetName} APPEND_STRING PROPERTY LINK_FLAGS \" ${{OpenMP_CXX_FLAGS}}\")\n".format(targetName=targetName, indent=cmakeIndent)
+  else:
+    _logger.error("Unknown benchmark language")
+    raise Exception("Unknown benchmark language")
   return (guardDecl, addDepDecl)

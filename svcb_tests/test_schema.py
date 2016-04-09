@@ -533,6 +533,20 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateOpenMPDep(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'dependencies': { 'openmp': {} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidatePthreadsDepWithVersion(self):
     s = {
       'architectures': ['x86_64'],

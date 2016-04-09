@@ -3,5 +3,6 @@ add_svcomp_benchmark(unsigned_overflow32)
 add_svcomp_benchmark(unsigned_overflow64)
 add_svcomp_benchmark(variants)
 add_svcomp_benchmark(pthread)
+add_svcomp_benchmark(openmp)
 
 add_subdirectory(cxx)

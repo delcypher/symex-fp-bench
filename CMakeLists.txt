@@ -88,6 +88,7 @@ add_compile_options(${SVCOMP_WARNING_FLAGS})
 # Pthreads
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads)
+find_package(OpenMP)
 
 ###############################################################################
 # Add add_svcomp_benchmark() macro

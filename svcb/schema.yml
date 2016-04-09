@@ -97,6 +97,7 @@ properties:
     properties:
     # Possible dependencies
       pthreads: *dependency_properties
+      openmp: *dependency_properties
   memory_model:
     type: string
     enum:
