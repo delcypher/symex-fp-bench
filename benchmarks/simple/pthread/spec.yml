@@ -9,7 +9,7 @@ sources:
   - main.c
 verification_tasks:
   no_reach_error_function:
-    correct: false
+    correct: true
 comments: |
   Simple benchmark that uses pthreads
 dependencies:
