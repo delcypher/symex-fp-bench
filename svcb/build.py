@@ -31,7 +31,7 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
       targetName = '{}.{}'.format(b.name, arch)
       if arch != 'any' and arch != supportedArchitecture:
         # Architecture not supported
-        declStr += 'message(STATUS "Compiler cannot build target {}")\n'.format(targetName)
+        declStr += 'message(STATUS "Compiler cannot build target {}. Architecture not supported by compiler")\n'.format(targetName)
         continue
 
       # Emit code that can be used by dependencies to prevent generaton of the target.
@@ -46,6 +46,20 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
       # Emit dependency code that may change guard on executable
       for (guardDecl, _) in dependencyHandlingCMakeDecls:
         declStr += guardDecl
+
+      # Emit code that can disable building the benchmark if the language
+      # version is not supported
+      lang_ver = b.language.replace('+','X').upper()
+      declStr += """
+if (NOT HAS_STD_{lang_ver})
+{indent}set({enableTargetCMakeVariable} FALSE)
+{indent}list(APPEND {disabledTargetReasonsCMakeVariable} "Compiler does not support language standard {lang_ver}")
+endif()
+  \n""".format(
+      lang_ver=lang_ver,
+      enableTargetCMakeVariable=enableTargetCMakeVariable,
+      disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
+      indent=cmakeIndent)
 
       # Emit guard
       declStr += "if ({})\n".format(enableTargetCMakeVariable)
@@ -70,7 +84,6 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
           declStr += "  {}\n".format(macroDefine)
         declStr += ")\n"
       # Emit compiler flags
-      lang_ver = b.language.replace('+','X').upper()
       declStr += "{indent}target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(
         indent=cmakeIndent,
         target_name=targetName,

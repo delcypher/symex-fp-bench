@@ -79,21 +79,48 @@ endif()
 ###############################################################################
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
-# FIXME: Detect these and set them
-set(SVCOMP_STD_C89 "-std=c89")
-set(SVCOMP_STD_C99 "-std=c99")
-set(SVCOMP_STD_C11 "-std=c11")
-set(SVCOMP_STD_GNUC89 "-std=gnu89")
-set(SVCOMP_STD_GNUC99 "-std=gnu99")
-set(SVCOMP_STD_GNUC11 "-std=gnu11")
-set(SVCOMP_STD_CXX98 "-std=c++98")
-set(SVCOMP_STD_CXX03 "-std=c++03")
-set(SVCOMP_STD_CXX11 "-std=c++11")
-set(SVCOMP_STD_CXX14 "-std=c++14")
-set(SVCOMP_STD_GNUCXX98 "-std=gnu++98")
-set(SVCOMP_STD_GNUCXX03 "-std=gnu++03")
-set(SVCOMP_STD_GNUCXX11 "-std=gnu++11")
-set(SVCOMP_STD_GNUCXX14 "-std=gnu++14")
+function(SVCOMP_SANITIZE_FLAG_NAME OUTPUT_VAR FLAG)
+  string(REPLACE "-" "_" SANITIZED_FLAG_NAME "${FLAG}")
+  string(REPLACE "/" "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
+  string(REPLACE "=" "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
+  string(REPLACE " " "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
+  set(${OUTPUT_VAR} "${SANITIZED_FLAG_NAME}" PARENT_SCOPE)
+endfunction()
+
+# FIXME: This assumes a gcc/clang like compiler
+macro(SVCOMP_CHECK_C_LANG_STD flag name)
+  CHECK_C_COMPILER_FLAG("${flag}" HAS_${name})
+  if (HAS_${name})
+    set(SVCOMP_${name} "${flag}")
+  else()
+    message(WARNING "C standard ${name} is not supported")
+  endif()
+endmacro()
+SVCOMP_CHECK_C_LANG_STD("-std=c89" STD_C89)
+SVCOMP_CHECK_C_LANG_STD("-std=c99" STD_C99)
+SVCOMP_CHECK_C_LANG_STD("-std=c11" STD_C11)
+SVCOMP_CHECK_C_LANG_STD("-std=gnu89" STD_GNU89)
+SVCOMP_CHECK_C_LANG_STD("-std=gnu99" STD_GNU99)
+SVCOMP_CHECK_C_LANG_STD("-std=gnu11" STD_GNU11)
+
+# FIXME: This assumes a gcc/clang like compiler
+macro(SVCOMP_CHECK_CXX_LANG_STD flag name)
+  CHECK_CXX_COMPILER_FLAG("${flag}" HAS_${name})
+  if (HAS_${name})
+    set(SVCOMP_${name} "${flag}")
+  else()
+    message(WARNING "C++ standard ${name} is not supported")
+  endif()
+endmacro()
+
+SVCOMP_CHECK_CXX_LANG_STD("-std=c++98" STD_CXX98)
+SVCOMP_CHECK_CXX_LANG_STD("-std=c++03" STD_CXX03)
+SVCOMP_CHECK_CXX_LANG_STD("-std=c++11" STD_CXX11)
+SVCOMP_CHECK_CXX_LANG_STD("-std=c++14" STD_CXX14)
+SVCOMP_CHECK_CXX_LANG_STD("-std=gnu++98" STD_GNUXX98)
+SVCOMP_CHECK_CXX_LANG_STD("-std=gnu++03" STD_GNUXX03) # Clang 3.7 doesn't seem to support this, should we drop supporting this?
+SVCOMP_CHECK_CXX_LANG_STD("-std=gnu++11" STD_GNUXX11)
+SVCOMP_CHECK_CXX_LANG_STD("-std=gnu++14" STD_GNUXX14)
 
 ###############################################################################
 # Detect supported warning flags
@@ -119,13 +146,6 @@ set(SVCOMP_CXX_WARNING_FLAGS
   -Wreorder
 )
 
-function(SVCOMP_SANITIZE_FLAG_NAME OUTPUT_VAR FLAG)
-  string(REPLACE "-" "_" SANITIZED_FLAG_NAME "${FLAG}")
-  string(REPLACE "/" "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
-  string(REPLACE "=" "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
-  string(REPLACE " " "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
-  set(${OUTPUT_VAR} "${SANITIZED_FLAG_NAME}" PARENT_SCOPE)
-endfunction()
 
 # Globally set C compiler warning flags that are supported and emit
 # a warning about unsupported flags
