@@ -19,6 +19,29 @@ if (NOT SVCOMP_ARCHITECTURE)
   message(FATAL_ERROR "Failed to detect target architecture")
 endif()
 
+################################################################################
+# Build type
+################################################################################
+message(STATUS "CMake generator: ${CMAKE_GENERATOR}")
+if (DEFINED CMAKE_CONFIGURATION_TYPES)
+  # Multi-configuration build (e.g. Visual Studio and Xcode). Here
+  # CMAKE_BUILD_TYPE doesn't matter
+  message(STATUS "Available configurations: ${CMAKE_CONFIGURATION_TYPES}")
+else()
+  # Single configuration generator (e.g. Unix Makefiles, Ninja)
+  set(available_build_types Debug Release RelWithDebInfo MinSizeRel)
+  if(NOT CMAKE_BUILD_TYPE)
+    message(STATUS "CMAKE_BUILD_TYPE is not set. Setting default")
+    message(STATUS "The available build types are: ${available_build_types}")
+    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE String
+        "Options are ${available_build_types}"
+        FORCE)
+    # Provide drop down menu options in cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${available_build_types})
+  endif()
+  message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+endif()
+
 ###############################################################################
 # Set default project BUILD_TYPE
 ###############################################################################
