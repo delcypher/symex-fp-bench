@@ -518,3 +518,79 @@ class TestSchema(unittest.TestCase):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidatePthreadsDep(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'dependencies': { 'pthreads': {} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidatePthreadsDepWithVersion(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'dependencies': { 'pthreads': {'version': '4' }}, # Should we enforce what the version string should look like?
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateUnknownDep(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'dependencies': { 'xxx': None },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Additional properties are not allowed \('xxx' was unexpected\)"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateEmptyDeps(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'dependencies': { },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateWrongDepType(self):
+    s = {
+      'architectures': ['x86_64'],
+      'language': 'c99',
+      'memory_model': 'precise',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'dependencies': ['xxx', 'yyy'],
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"\['xxx', 'yyy'\] is not of type 'object'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)

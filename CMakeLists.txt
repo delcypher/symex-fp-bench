@@ -83,6 +83,13 @@ set(SVCOMP_WARNING_FLAGS
 add_compile_options(${SVCOMP_WARNING_FLAGS})
 
 ###############################################################################
+# Detect libraries that benchmarks may depend on
+###############################################################################
+# Pthreads
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+find_package(Threads)
+
+###############################################################################
 # Add add_svcomp_benchmark() macro
 ###############################################################################
 include(cmake/add_svcomp_benchmark.cmake)

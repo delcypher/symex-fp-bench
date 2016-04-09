@@ -2,6 +2,7 @@ from . import benchmark
 from . import schema
 import os
 
+cmakeIndent = "  "
 def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
   """
     Returns a string containing CMake declarations
@@ -30,19 +31,36 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
         declStr += 'message(STATUS "Compiler cannot build target {}")\n'.format(targetName)
         continue
 
+      # Emit code that can be used by dependencies to prevent generaton of the target.
+      # This is useful if a library required is not available.
+      enableTargetCMakeVariable = "ENABLE_TARGET_{}".format(b.name.upper())
+      declStr += "set({} TRUE)\n".format(enableTargetCMakeVariable)
+      disabledTargetReasonsCMakeVariable = "DISABLED_TARGET_REASONS"
+      declStr += "set({} \"\")\n".format(disabledTargetReasonsCMakeVariable)
+
+      dependencyHandlingCMakeDecls = generate_dependency_decls(b, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable)
+
+      # Emit dependency code that may change guard on executable
+      for (guardDecl, _) in dependencyHandlingCMakeDecls:
+        declStr += guardDecl
+
+      # Emit guard
+      declStr += "if ({})\n".format(enableTargetCMakeVariable)
       # Emit ``add_executable()``
-      declStr += "add_executable({target_name}\n".format(target_name=targetName)
+      declStr += "{indent}add_executable({target_name}\n".format(indent=cmakeIndent, target_name=targetName)
       # FIXME: Need to put in absolute path
       for source in b.sources:
-        declStr += "  {source_file}\n".format(source_file=os.path.join(sourceRootDir, source))
-      declStr += ")\n"
+        declStr += "{indent}{indent}{source_file}\n".format(indent=cmakeIndent, source_file=os.path.join(sourceRootDir, source))
+      declStr += "  )\n"
       # Emit linking info
-      declStr += "target_link_libraries({target_name} PRIVATE {libs})\n".format(
+      declStr += "{indent}target_link_libraries({target_name} PRIVATE {libs})\n".format(
+        indent=cmakeIndent,
         target_name=targetName,
         libs="svcomp_runtime")
       # Emit custom macro defintions
       if len(b.defines) > 0:
-        declStr += "target_compile_definitions({target_name} PRIVATE\n".format(
+        declStr += "{indent}target_compile_definitions({target_name} PRIVATE\n".format(
+          indent=cmakeIndent,
           target_name=targetName)
         for macroDefine in b.defines:
           assert isinstance(macroDefine, str)
@@ -50,10 +68,50 @@ def generateCMakeDecls(benchmarkObjs, sourceRootDir, supportedArchitecture):
         declStr += ")\n"
       # Emit compiler flags
       lang_ver = b.language.replace('+','X').upper()
-      declStr += "target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(
+      declStr += "{indent}target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(
+        indent=cmakeIndent,
         target_name=targetName,
         lang_ver= lang_ver,
         arch = arch.upper()
       )
+
+      # Emit dependency code that adds necessary dependencies to that target
+      for (_, depAddDecl) in dependencyHandlingCMakeDecls:
+        declStr += depAddDecl
+
+      # Close guard
+      declStr += """
+else()
+{indent}set(msgConcat "")
+{indent}foreach (msg ${{DISABLED_TARGET_REASONS}})
+{indent}{indent}set(msgConcat "${{msgConcat}}\n  ${{msg}}")
+{indent}endforeach()
+{indent}message(WARNING "Not building target {target} due to ${{msgConcat}}")
+{indent}unset(msgConcat)
+endif()
+      \n""".format(indent=cmakeIndent, target=targetName)
   return declStr
 
+def generate_dependency_decls(benchmarkObj, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
+  """
+    Returns a list of tuples [(preGuardCode, inGuardCode)]
+  """
+  decls = []
+  for depName, info in benchmarkObj.dependencies.items():
+    if depName == 'pthreads':
+      decl = generate_pthreads_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable)
+      decls.append(decl)
+  return decls
+
+def generate_pthreads_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
+  # This guardDecl works in cooperation with find_package(Threads)
+  guardDecl = """
+if (NOT CMAKE_USE_PTHREADS_INIT)
+{indent}set({enableTargetCMakeVariable} FALSE)
+{indent}list(APPEND {disabledTargetReasonsCMakeVariable} "Pthreads library not available")
+endif()
+  \n""".format(enableTargetCMakeVariable=enableTargetCMakeVariable,
+      disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
+      indent=cmakeIndent)
+  addDepDecl = "{indent}target_link_libraries({targetName} PRIVATE ${{CMAKE_THREAD_LIBS_INIT}})\n".format(indent=cmakeIndent, targetName=targetName)
+  return (guardDecl, addDepDecl)

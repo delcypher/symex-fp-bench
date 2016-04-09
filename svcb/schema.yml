@@ -33,6 +33,12 @@ definitions:
     additionalProperties: false
     required:
       - correct
+  dependency_properties: &dependency_properties
+    # Addition dependency information
+    type: object
+    properties:
+      version:
+        type: string
 additionalProperties: false
 properties:
   architectures:
@@ -85,6 +91,12 @@ properties:
       - gnu++03
       - gnu++11
       - gnu++14
+  dependencies:
+    type: object
+    additionalProperties: false
+    properties:
+    # Possible dependencies
+      pthreads: *dependency_properties
   memory_model:
     type: string
     enum:

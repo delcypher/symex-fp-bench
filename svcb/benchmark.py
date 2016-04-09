@@ -12,6 +12,8 @@ class Benchmark(object):
       self._data['comments'] = ""
     if 'defines' not in self._data:
       self._data['defines'] = []
+    if 'dependencies' not in self._data:
+      self._data['dependencies'] = {}
 
   def __str__(self):
     return pprint.pformat(self._data)
@@ -38,6 +40,10 @@ class Benchmark(object):
   @property
   def language(self):
     return self._data['language']
+
+  @property
+  def dependencies(self):
+    return self._data['dependencies']
 
 def getBenchmarks(benchSpec):
   assert isinstance(benchSpec, dict)
