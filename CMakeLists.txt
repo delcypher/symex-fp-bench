@@ -77,6 +77,8 @@ endif()
 ###############################################################################
 # Setup variables used by auto generated CMake files
 ###############################################################################
+include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
 # FIXME: Detect these and set them
 set(SVCOMP_STD_C89 "-std=c89")
 set(SVCOMP_STD_C99 "-std=c99")
@@ -96,14 +98,58 @@ set(SVCOMP_STD_GNUCXX14 "-std=gnu++14")
 ###############################################################################
 # Detect supported warning flags
 ###############################################################################
-# FIXME: Do this properly
-set(SVCOMP_WARNING_FLAGS
-    -Wall
-    -Werror=main
-    -Werror=implicit
-   )
-# Set flags globally
-add_compile_options(${SVCOMP_WARNING_FLAGS})
+# Warnings for both the C and C++ compiler
+set(SVCOMP_BOTH_WARNING_FLAGS
+  -Wall
+  -Werror=main
+  -Wformat
+  -Wmain
+  -Wuninitialized
+  -Winit-self
+)
+# Warning flags for the C compiler only
+set(SVCOMP_C_WARNING_FLAGS
+  -Werror=implicit
+  -Werror=missing-parameter-type
+  )
+# Warning flags for the C++ compiler only
+set(SVCOMP_CXX_WARNING_FLAGS
+  -Wnon-virtual-dtor
+  -Woverloaded-virtual
+  -Wreorder
+)
+
+function(SVCOMP_SANITIZE_FLAG_NAME OUTPUT_VAR FLAG)
+  string(REPLACE "-" "_" SANITIZED_FLAG_NAME "${FLAG}")
+  string(REPLACE "/" "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
+  string(REPLACE "=" "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
+  string(REPLACE " " "_" SANITIZED_FLAG_NAME "${SANITIZED_FLAG_NAME}")
+  set(${OUTPUT_VAR} "${SANITIZED_FLAG_NAME}" PARENT_SCOPE)
+endfunction()
+
+# Globally set C compiler warning flags that are supported and emit
+# a warning about unsupported flags
+foreach (flag ${SVCOMP_BOTH_WARNING_FLAGS} ${SVCOMP_C_WARNING_FLAGS})
+  SVCOMP_SANITIZE_FLAG_NAME(SANITIZED_FLAG_NAME "${flag}")
+  CHECK_C_COMPILER_FLAG("${flag}" HAS_C_${SANITIZED_FLAG_NAME})
+  if (HAS_C_${SANITIZED_FLAG_NAME})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+  else()
+    message(WARNING "C compiler does not support flag \"${flag}\"")
+  endif()
+endforeach()
+
+# Globally set C++ compiler warning flags that are supported and emit
+# a warning about unsupported flags
+foreach (flag ${SVCOMP_BOTH_WARNING_FLAGS} ${SVCOMP_CXX_WARNING_FLAGS})
+  SVCOMP_SANITIZE_FLAG_NAME(SANITIZED_FLAG_NAME "${flag}")
+  CHECK_CXX_COMPILER_FLAG("${flag}" HAS_CXX_${SANITIZED_FLAG_NAME})
+  if (HAS_CXX_${SANITIZED_FLAG_NAME})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+  else()
+    message(WARNING "C++ compiler does not support flag \"${flag}\"")
+  endif()
+endforeach()
 
 ###############################################################################
 # Detect libraries that benchmarks may depend on
