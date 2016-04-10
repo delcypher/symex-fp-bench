@@ -1,4 +1,6 @@
 architectures: any
+categories:
+  - examples
 language: c99
 memory_model: precise
 name: variant_demo

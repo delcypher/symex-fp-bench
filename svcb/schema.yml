@@ -65,6 +65,9 @@ properties:
         type: string
         enum:
           - any
+  categories:
+    type: array
+    uniqueItems: true
   comments:
     # TODO: Is this flexible enough?
     type: string
@@ -178,6 +181,7 @@ properties:
       "terminates": *verification_task_properties
 required:
   - architectures
+  - categories
   - language
   - memory_model
   - name

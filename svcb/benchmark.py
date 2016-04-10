@@ -46,6 +46,10 @@ class Benchmark(object):
   def dependencies(self):
     return self._data['dependencies']
 
+  @property
+  def categories(self):
+    return self._data['categories']
+
   def isLanguageC(self):
     return not self.isLanguageCXX()
 

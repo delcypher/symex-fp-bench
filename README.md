@@ -52,6 +52,12 @@ $ make
 make check-svcb
 ```
 
+# Displaying the number of benchmarks by category
+
+```
+make show-categories
+```
+
 # SV-COMP runtime library
 
 A small runtime library is provided which has two goals:

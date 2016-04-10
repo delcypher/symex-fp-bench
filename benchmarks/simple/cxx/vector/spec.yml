@@ -1,6 +1,8 @@
 architectures:
   - x86_64
   - i686
+categories:
+  - examples
 language: c++98
 memory_model: precise
 name: check_vector_push_back

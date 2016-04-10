@@ -1,6 +1,8 @@
 architectures:
   - x86_64
   - i686
+categories:
+  - examples
 language: c99
 memory_model: precise
 name: bad_unsigned_overflow32

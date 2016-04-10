@@ -199,6 +199,17 @@ add_custom_target(check-svcb ALL
                  )
 
 ###############################################################################
+# Show categories
+###############################################################################
+add_custom_target(show-categories
+                  COMMAND ${PYTHON_EXECUTABLE}
+                    ${CMAKE_SOURCE_DIR}/category-count.py
+                    ${CMAKE_SOURCE_DIR}/benchmarks
+                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                  COMMENT "Showing benchmark categories"
+                 )
+
+###############################################################################
 # Benchmarks
 ###############################################################################
 add_subdirectory(benchmarks)
