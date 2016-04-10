@@ -1,3 +1,6 @@
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
+
 # List of additional files that generation of target
 # include files should depend on. This ensures that if these
 # files change the files containing the benchmark targets

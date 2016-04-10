@@ -1,2 +1,4 @@
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
 add_subdirectory(c)
 add_subdirectory(cxx)

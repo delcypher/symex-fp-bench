@@ -1,3 +1,6 @@
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
+
 # This overrides the default flags for the different CMAKE_BUILD_TYPEs
 set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/c_flags_override.cmake")
 project(SVCOMP_C_BENCHMARKS C CXX)

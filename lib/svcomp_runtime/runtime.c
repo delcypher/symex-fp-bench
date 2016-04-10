@@ -1,3 +1,7 @@
+/* Copyright (c) 2016, Daniel Liew
+   This file is covered by the license in LICENSE-SVCB.txt
+*/
+
 // This provides a basic implementation of the SV-COMP
 // runtime functions. It currently only exists to provide
 // stub implementations that benchmarks can link against

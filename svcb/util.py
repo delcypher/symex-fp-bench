@@ -1,3 +1,5 @@
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
 import yaml
 
 if hasattr(yaml, 'CLoader'):

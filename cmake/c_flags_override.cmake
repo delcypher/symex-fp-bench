@@ -1,3 +1,6 @@
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
+
 # This file overrides the default compiler flags for CMake's built-in
 # configurations (CMAKE_BUILD_TYPE). Most compiler flags should not be set here.
 # The main # purpose is to make sure ``-DNDEBUG`` is never set by default.

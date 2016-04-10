@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
 """
 Reads a benchmark specification file and
 emits CMake declarations for building the

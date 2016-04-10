@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Copyright (c) 2016, Daniel Liew
+# This file is covered by the license in LICENSE-SVCB.txt
 """
 Traverse a directory looking for benchmarks
 and group them by category
