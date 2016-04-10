@@ -5,5 +5,3 @@ add_svcomp_benchmark(variants)
 add_svcomp_benchmark(pthread)
 add_svcomp_benchmark(openmp)
 add_svcomp_benchmark(sine)
-
-add_subdirectory(cxx)
