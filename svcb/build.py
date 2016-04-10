@@ -161,18 +161,13 @@ endif()
       disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
       indent=cmakeIndent)
 
-  addDepDecl = """
-{indent}target_compile_options({targetName} PRIVATE $<$<COMPILE_LANGUAGE:C>:${{OpenMP_C_FLAGS}}>)
-{indent}target_compile_options({targetName} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${{OpenMP_CXX_FLAGS}}>)
-  \n""".format(targetName=targetName, indent=cmakeIndent)
-
-  # FIXME: I can't find a nice way to have CMake determine the linker language.
-  # Reading the LINKER_LANGUAGE property of a target doesn't seem to work so use
-  # our knowledge of the benchmark to determine the language
+  addDepDecl=""
   if benchmarkObj.isLanguageC():
-    addDepDecl +="{indent}set_property(TARGET {targetName} APPEND_STRING PROPERTY LINK_FLAGS \" ${{OpenMP_C_FLAGS}}\")\n".format(targetName=targetName, indent=cmakeIndent)
+    addDepDecl += "{indent}target_compile_options({targetName} PRIVATE ${{OpenMP_C_FLAGS}})\n".format(indent=cmakeIndent, targetName=targetName)
+    addDepDecl += "{indent}set_property(TARGET {targetName} APPEND_STRING PROPERTY LINK_FLAGS \" ${{OpenMP_C_FLAGS}}\")\n".format(targetName=targetName, indent=cmakeIndent)
   elif benchmarkObj.isLanguageCXX():
-    addDepDecl +="{indent}set_property(TARGET {targetName} APPEND_STRING PROPERTY LINK_FLAGS \" ${{OpenMP_CXX_FLAGS}}\")\n".format(targetName=targetName, indent=cmakeIndent)
+    addDepDecl += "{indent}target_compile_options({targetName} PRIVATE ${{OpenMP_CXX_FLAGS}})\n".format(indent=cmakeIndent, targetName=targetName)
+    addDepDecl += "{indent}set_property(TARGET {targetName} APPEND_STRING PROPERTY LINK_FLAGS \" ${{OpenMP_CXX_FLAGS}}\")\n".format(targetName=targetName, indent=cmakeIndent)
   else:
     _logger.error("Unknown benchmark language")
     raise Exception("Unknown benchmark language")
