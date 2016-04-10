@@ -12,7 +12,6 @@ import svcb
 import svcb.benchmark
 import svcb.build
 import svcb.schema
-import svcb.util
 import sys
 import yaml
 
@@ -40,7 +39,7 @@ def main(args):
   _logger = logging.getLogger(__name__)
 
   try:
-    benchSpec = svcb.util.loadBenchmarkSpecification(pArgs.bench_spec_file)
+    benchSpec = svcb.schema.loadBenchmarkSpecification(pArgs.bench_spec_file)
   except svcb.schema.BenchmarkSpecificationValidationError as e:
     _logger.error('Failed to validate benchmark specification against schema')
     _logger.error(e.message)

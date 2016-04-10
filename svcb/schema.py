@@ -1,3 +1,4 @@
+from . import util
 import collections
 import copy
 import os
@@ -16,6 +17,11 @@ class BenchmarkSpecificationValidationError(Exception):
   def __str__(self):
     return self.message
 
+def loadBenchmarkSpecification(openFile):
+  benchSpec = util.loadYaml(openFile)
+  validateBenchmarkSpecification(benchSpec)
+  return benchSpec
+
 def getSchema():
   """
     Return the Schema for SV-COMP benchmark specification
@@ -24,7 +30,7 @@ def getSchema():
   yamlFile = os.path.join(os.path.dirname(__file__), 'schema.yml')
   schema = None
   with open(yamlFile, 'r') as f:
-    schema = yaml.load(f)
+    schema = util.loadYaml(f)
   assert isinstance(schema, dict)
   assert '__version__' in schema
   return schema

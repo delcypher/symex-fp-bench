@@ -1,9 +1,11 @@
-from . import schema
 import yaml
 
-def loadBenchmarkSpecification(openFile):
-  # FIXME: Use C loader implementation if available
-  benchSpec = yaml.load(openFile)
-  schema.validateBenchmarkSpecification(benchSpec)
-  return benchSpec
+if hasattr(yaml, 'CLoader'):
+  # Use libyaml which is faster
+  _loader = yaml.CLoader
+else:
+  _loader = yaml.Loader
+
+def loadYaml(openFile):
+  return yaml.load(openFile, Loader=_loader)
 
