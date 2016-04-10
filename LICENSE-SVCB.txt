@@ -1,3 +1,5 @@
+# License for SVCB components
+
 Copyright (c) 2016, Daniel Liew
 All rights reserved.
 
