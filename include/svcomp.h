@@ -30,7 +30,7 @@
 #include <stddef.h>
 
 #ifndef __has_attribute
-  #define __has_attribute(x) 0  // Compatibility with non gcc/clang compilers.
+  #define __has_attribute(x) 0  /* Compatibility with non gcc/clang compilers. */
 #endif
 
 #if __has_attribute(__noreturn__)
@@ -43,7 +43,7 @@
 extern "C" {
 #endif
 
-// Functions that return non-determinstic values of a particular type
+/* Functions that return non-determinstic values of a particular type */
 #define SVCOMP_NONDET_DECL_D(NAME,T) \
   /*! \brief Return a non-determinisic value of type T
    \details
@@ -61,7 +61,7 @@ extern "C" {
 
 #define SVCOMP_NONDET_DECL(NAME) SVCOMP_NONDET_DECL_D(NAME,NAME)
 
-// FIXME: Decide how to handle commented out types
+/* FIXME: Decide how to handle commented out types */
 
 #ifdef __cplusplus
 SVCOMP_NONDET_DECL(bool)
@@ -73,11 +73,11 @@ SVCOMP_NONDET_DECL(double)
 SVCOMP_NONDET_DECL(float)
 SVCOMP_NONDET_DECL(int)
 SVCOMP_NONDET_DECL(long)
-//SVCOMP_NONDET_DECL(loff_t)
+/* SVCOMP_NONDET_DECL(loff_t) */
 SVCOMP_NONDET_DECL_D(pointer,void*)
 SVCOMP_NONDET_DECL_D(pchar,char*)
-//SVCOMP_NONDET_DECL(pthread_t)
-//SVCOMP_NONDET_DECL(sector_t)
+/* SVCOMP_NONDET_DECL(pthread_t) */
+/* SVCOMP_NONDET_DECL(sector_t) */
 SVCOMP_NONDET_DECL(short)
 SVCOMP_NONDET_DECL(size_t)
 SVCOMP_NONDET_DECL_D(u32, uint32_t)
