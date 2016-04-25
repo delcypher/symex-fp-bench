@@ -12,7 +12,7 @@ sources:
 verification_tasks:
   no_reach_error_function:
     correct: false
-comments:
+comments: |
   This benchmark asserts that the size method of
   std::vector returns the right number when pushing
   back 3 items.
