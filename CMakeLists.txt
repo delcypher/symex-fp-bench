@@ -6,6 +6,16 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/c_flags_ov
 project(SVCOMP_C_BENCHMARKS C CXX)
 cmake_minimum_required(VERSION 2.8.12)
 
+################################################################################
+# Sanity check - Disallow building in source to avoid conflicting with
+# ``Makefiles`` that exist in the main ``sv-benchmarks`` repository and would
+# cause problems if we ever merged.
+################################################################################
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+  message(FATAL_ERROR "In source builds are not allowed. You should invoke "
+          "CMake from a different directory.")
+endif()
+
 ###############################################################################
 # Set useful variables depending on CMake version
 ###############################################################################
