@@ -3,7 +3,7 @@ categories:
   - examples
 language: c99
 memory_model: precise
-name: variant_demo
+name: variant_example
 schema_version: 0
 sources:
   - main.c

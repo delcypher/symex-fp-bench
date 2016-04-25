@@ -4,7 +4,7 @@ categories:
   - examples
 language: c99
 memory_model: precise
-name: unsigned_overflow64
+name: unsigned_overflow64_example
 schema_version: 0
 sources:
   - main.c

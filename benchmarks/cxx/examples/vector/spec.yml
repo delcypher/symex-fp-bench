@@ -5,7 +5,7 @@ categories:
   - examples
 language: c++98
 memory_model: precise
-name: check_vector_push_back
+name: check_vector_push_back_example
 schema_version: 0
 sources:
   - main.cpp

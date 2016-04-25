@@ -5,7 +5,7 @@ categories:
   - examples
 language: c99
 memory_model: precise
-name: sine
+name: sine_example
 schema_version: 0
 sources:
   - main.c

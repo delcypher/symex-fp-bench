@@ -5,7 +5,7 @@ categories:
   - examples
 language: c99
 memory_model: precise
-name: bad_unsigned_overflow32
+name: bad_unsigned_overflow32_example
 schema_version: 0
 sources:
   - main.c
