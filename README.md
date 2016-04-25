@@ -17,7 +17,7 @@ verifiying and compiling the benchmark.
 
 The schema for these benchmark specification files is written using
 [json-schema](http://json-schema.org/) and be found at
-[svcb/schema.yml](svcb/schema.yml).
+[svcb/svcb/schema.yml](svcb/svcb/schema.yml).
 
 Please note that the schema currently isn't finalised
 
