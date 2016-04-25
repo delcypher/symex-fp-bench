@@ -1,5 +1,7 @@
 # SV-COMP benchmark build mock up
 
+Build status: [![Build Status](https://travis-ci.org/delcypher/svcomp-build-mockup.svg?branch=master)](https://travis-ci.org/delcypher/svcomp-build-mockup)
+
 This repository contains a draft design for organising and building
 SV-COMP's C and C++ benchmarks.
 
