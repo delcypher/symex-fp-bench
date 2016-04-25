@@ -25,7 +25,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Non-deterministic values have all their bits set to zero
+// We have to choose a concrete implementation here. For
+// now just set all bytes to zero.
 #define SVCOMP_NONDET_DEFN_D(NAME,T) \
 T __VERIFIER_nondet_ ## NAME() { \
   T initialValue; \
