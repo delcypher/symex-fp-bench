@@ -5,6 +5,8 @@
 Reads a benchmark specification file and
 prints the benchmarks it declares
 """
+from load_svcb import add_svcb_to_module_search_path
+add_svcb_to_module_search_path()
 import argparse
 import logging
 import svcb

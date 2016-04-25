@@ -5,6 +5,8 @@
 Traverse a directory looking for benchmarks
 and group them by category
 """
+from load_svcb import add_svcb_to_module_search_path
+add_svcb_to_module_search_path()
 import svcb.schema
 import svcb.benchmark
 import argparse

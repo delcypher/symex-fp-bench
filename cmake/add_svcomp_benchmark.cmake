@@ -6,12 +6,12 @@
 # files change the files containing the benchmark targets
 # get regenerated (i.e. OUTPUT_FILE in add_svcomp_benchmark())
 set(SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS
-  "${CMAKE_SOURCE_DIR}/svcb/benchmark.py"
-  "${CMAKE_SOURCE_DIR}/svcb/build.py"
-  "${CMAKE_SOURCE_DIR}/svcb/schema.py"
-  "${CMAKE_SOURCE_DIR}/svcb/schema.yml"
-  "${CMAKE_SOURCE_DIR}/svcb/util.py"
-  "${CMAKE_SOURCE_DIR}/svcb-emit-cmake-decls.py"
+  "${SVCB_DIR}/svcb/benchmark.py"
+  "${SVCB_DIR}/svcb/build.py"
+  "${SVCB_DIR}/svcb/schema.py"
+  "${SVCB_DIR}/svcb/schema.yml"
+  "${SVCB_DIR}/svcb/util.py"
+  "${SVCB_DIR}/tools/svcb-emit-cmake-decls.py"
 )
 
 macro(add_svcomp_benchmark BENCHMARK_DIR)
@@ -29,7 +29,7 @@ macro(add_svcomp_benchmark BENCHMARK_DIR)
   endforeach()
   if (("${INPUT_FILE}" IS_NEWER_THAN "${OUTPUT_FILE}") OR ${_should_force_regen})
     message(STATUS "Generating \"${OUTPUT_FILE}\"")
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/svcb-emit-cmake-decls.py
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} "${SVCB_DIR}/tools/svcb-emit-cmake-decls.py"
                             ${INPUT_FILE}
                             --architecture ${SVCOMP_ARCHITECTURE}
                             --output ${OUTPUT_FILE}

@@ -7,6 +7,11 @@ project(SVCOMP_C_BENCHMARKS C CXX)
 cmake_minimum_required(VERSION 2.8.12)
 
 ################################################################################
+# Set the root of SVCB infrastructure
+################################################################################
+set(SVCB_DIR "${CMAKE_SOURCE_DIR}/svcb")
+
+################################################################################
 # Sanity check - Disallow building in source to avoid conflicting with
 # ``Makefiles`` that exist in the main ``sv-benchmarks`` repository and would
 # cause problems if we ever merged.
@@ -207,7 +212,7 @@ add_subdirectory(lib)
 ###############################################################################
 add_custom_target(check-svcb ALL
                   COMMAND ${PYTHON_EXECUTABLE} -m unittest discover
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  WORKING_DIRECTORY "${SVCB_DIR}"
                   COMMENT "Running svcb unit tests"
                  )
 
@@ -216,7 +221,7 @@ add_custom_target(check-svcb ALL
 ###############################################################################
 add_custom_target(show-categories
                   COMMAND ${PYTHON_EXECUTABLE}
-                    ${CMAKE_SOURCE_DIR}/category-count.py
+                    "${SVCB_DIR}/tools/category-count.py"
                     ${CMAKE_SOURCE_DIR}/benchmarks
                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                   COMMENT "Showing benchmark categories"
