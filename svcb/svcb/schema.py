@@ -83,7 +83,31 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
         str(e),
         e.absolute_schema_path)
 
-  # Do additional sanity checks if necessary
+  # Do additional checks
+
+  # Check `verification_tasks` is only specified globally or
+  # for each variant.
+  if 'verification_tasks' in benchSpec:
+    # Check for all variants that they don't specifiy their
+    # own `verification_tasks`.
+    if 'variants' in benchSpec:
+      for (variantName, variantProperties) in benchSpec['variants'].items():
+        assert isinstance(variantProperties, dict)
+        if 'verification_tasks' in variantProperties:
+          raise BenchmarkSpecificationValidationError(
+          "'verification_tasks' specified for variant '{}' conflicts with global 'verification_tasks'".format(variantName))
+  else:
+    # There must be variants and they must all specify their
+    # own `verification_tasks`.
+    if not 'variants' in benchSpec:
+      raise BenchmarkSpecificationValidationError("'verification_tasks' must be specified")
+    for (variantName, variantProperties) in benchSpec['variants'].items():
+      assert isinstance(variantProperties, dict)
+      if 'verification_tasks' not in variantProperties:
+        raise BenchmarkSpecificationValidationError(
+        "'verification_tasks' must be specified for variant '{}'".format(variantName))
+
+
 
 def upgradeBenchmarkSpeciationToVersion(benchSpec, schemaVersion):
   """

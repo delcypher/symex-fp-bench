@@ -272,6 +272,59 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateVariantWithDifferentVerificationTasks(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': { 'config1': { 'defines': {'FOO':None, 'BAR':'BAZ', 'NUM':'0'}, 'verification_tasks': { 'no_assert_fail': {'correct': True} }},
+                    'config2': { 'defines': {'NUM':'1'}, 'verification_tasks': { 'no_assert_fail': {'correct': False} }}
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateInvalidVariantWithDifferentVerificationTasks(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': { 'config1': { 'defines': {'FOO':None, 'BAR':'BAZ', 'NUM':'0'}, 'verification_tasks': { 'no_assert_fail': {'correct': True} }},
+                    'config2': { 'defines': {'NUM':'1'}, 'verification_tasks': { 'no_assert_fail': {'correct': False} }},
+      },
+      # Can't specify verification_tasks in multiply places
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'verification_tasks' specified for variant 'config(1|2)' conflicts with global 'verification_tasks'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateInvalidVariantWithMissingVerificationTasks(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': { 'config1': { 'defines': {'FOO':None, 'BAR':'BAZ', 'NUM':'0'}, 'verification_tasks': { 'no_assert_fail': {'correct': True} }},
+                    'config2': { 'defines': {'NUM':'1'}},
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'verification_tasks' must be specified for variant 'config2'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateIncorrectVariantDefine(self):
     s = {
       'architectures': ['x86_64'],
@@ -332,12 +385,11 @@ class TestSchema(unittest.TestCase):
       'sources': ['a.c', 'b.c'],
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"'verification_tasks' is a required property"
-    # FIXME:
-    #with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
-    #  schema.validateBenchmarkSpecification(s)
-    #with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
-    #  schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+    msgRegex= r"'verification_tasks' must be specified"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
   def testValidateEmptyMissingCorrectness(self):
     s = {

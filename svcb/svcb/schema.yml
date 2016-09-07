@@ -176,8 +176,12 @@ properties:
           # Either `verification_tasks` must be specified for each variant
           # or the global `verification_tasks` must be used.
           #
-          # FIXME: There is no way to specify this using JSON-schema so
-          # this has to be enforced after validation against the schema.
+          # NOTE: There is a way to specify that `verification_tasks`
+          # should only be specified in one place (using a top level `allOf` then nest `oneOf`
+          # to consider the two different places we'd like to put `verification_tasks`) however
+          # it makes the schema **very hard** to read and also makes error messages from
+          # the schema validator very hard to read. So instead the constraint should be enforced
+          # externally from the schema.
           verification_tasks: *verification_tasks
   verification_tasks: *verification_tasks
 required:
@@ -187,3 +191,4 @@ required:
   - name
   - sources
   - schema_version
+  # `verification_tasks` is required here or for each variant
