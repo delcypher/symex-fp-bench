@@ -25,6 +25,19 @@ definitions:
               type: string
               pattern: "[A-Za-z0-9]+"
     additionalProperties: false
+  dependency_properties: &dependency_properties
+    # Addition dependency information
+    type: object
+    properties:
+      version:
+        type: string
+  dependencies: &dependencies
+    type: object
+    additionalProperties: false
+    properties:
+    # Possible dependencies
+      pthreads: *dependency_properties
+      openmp: *dependency_properties
   verification_task_properties: &verification_task_properties
     type: object
     properties:
@@ -80,12 +93,6 @@ definitions:
     additionalProperties: false
     required:
       - correct
-  dependency_properties: &dependency_properties
-    # Addition dependency information
-    type: object
-    properties:
-      version:
-        type: string
   verification_tasks: &verification_tasks
     type: object
     minProperties: 1
@@ -163,13 +170,7 @@ properties:
       - gnu++03
       - gnu++11
       - gnu++14
-  dependencies:
-    type: object
-    additionalProperties: false
-    properties:
-    # Possible dependencies
-      pthreads: *dependency_properties
-      openmp: *dependency_properties
+  dependencies: *dependencies
   name:
     type: string
     pattern: "^[a-zA-Z0-9_.-]+$"
