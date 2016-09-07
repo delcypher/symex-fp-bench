@@ -48,6 +48,28 @@ definitions:
     properties:
       version:
         type: string
+  verification_tasks: &verification_tasks
+    type: object
+    minProperties: 1
+    additionalProperties: false
+    properties:
+      # It is not possible to reach an assertion in the program where the
+      # assertion will fail.
+      "no_assert_fail": *verification_task_properties
+      # It is not possible to reach a state in the program where free is called
+      # on an invalid address.
+      "no_invalid_free": *verification_task_properties
+      # It is not possible to reach a state in the program where a pointer to
+      # invalid memory is derefenced.
+      "no_invalid_deref": *verification_task_properties
+      # It is not possible to reach a state in the program where an integer
+      # division by zero occurs.
+      "no_integer_division_by_zero": *verification_task_properties
+      # It is not possible to reach a state in the program where an integer
+      # shift operation (i.e. left shift and, logical and arithmetic right
+      # shift)  occurs where the amount to shift by is greater than the
+      # bitwidth of the value being shifted.
+      "no_overshift": *verification_task_properties
 additionalProperties: false
 properties:
   architectures:
@@ -144,28 +166,7 @@ properties:
     patternProperties:
       # The name of a build variant must match this pattern
       "^[a-z0-9_-]+$": *macro_defines
-  verification_tasks:
-    type: object
-    minProperties: 1
-    additionalProperties: false
-    properties:
-      # It is not possible to reach an assertion in the program where the
-      # assertion will fail.
-      "no_assert_fail": *verification_task_properties
-      # It is not possible to reach a state in the program where free is called
-      # on an invalid address.
-      "no_invalid_free": *verification_task_properties
-      # It is not possible to reach a state in the program where a pointer to
-      # invalid memory is derefenced.
-      "no_invalid_deref": *verification_task_properties
-      # It is not possible to reach a state in the program where an integer
-      # division by zero occurs.
-      "no_integer_division_by_zero": *verification_task_properties
-      # It is not possible to reach a state in the program where an integer
-      # shift operation (i.e. left shift and, logical and arithmetic right
-      # shift)  occurs where the amount to shift by is greater than the
-      # bitwidth of the value being shifted.
-      "no_overshift": *verification_task_properties
+  verification_tasks: *verification_tasks
 required:
   - architectures
   - categories
