@@ -81,9 +81,12 @@ endif()
         declStr += "{indent}target_compile_definitions({target_name} PRIVATE\n".format(
           indent=cmakeIndent,
           target_name=targetName)
-        for macroDefine in b.defines:
-          assert isinstance(macroDefine, str)
-          declStr += "  {}\n".format(macroDefine)
+        for (macroName,macroValue) in b.defines.items():
+          assert isinstance(macroName, str)
+          if macroValue != None:
+            declStr += "  {}={}\n".format(macroName, macroValue)
+          else:
+            declStr += "  {}\n".format(macroName)
         declStr += ")\n"
       # Emit compiler flags
       declStr += "{indent}target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(

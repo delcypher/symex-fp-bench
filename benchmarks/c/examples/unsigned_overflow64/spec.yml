@@ -2,6 +2,9 @@ architectures:
   - x86_64
 categories:
   - examples
+defines:
+  FOO: null
+  BAR: "5"
 language: c99
 name: unsigned_overflow64_example
 schema_version: 0
