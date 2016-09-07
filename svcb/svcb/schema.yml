@@ -115,11 +115,6 @@ properties:
     # Possible dependencies
       pthreads: *dependency_properties
       openmp: *dependency_properties
-  memory_model:
-    type: string
-    enum:
-      - "precise"
-      - "simple"
   name:
     type: string
     pattern: "^[a-zA-Z0-9_.-]+$"
@@ -197,7 +192,6 @@ required:
   - architectures
   - categories
   - language
-  - memory_model
   - name
   - sources
   - schema_version
