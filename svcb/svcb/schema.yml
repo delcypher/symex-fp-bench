@@ -165,7 +165,20 @@ properties:
     additionalProperties: false
     patternProperties:
       # The name of a build variant must match this pattern
-      "^[a-z0-9_-]+$": *macro_defines
+      "^[a-z0-9_-]+$":
+        type: "object"
+        additionalProperties: false
+        properties:
+          # The macro definitions provided here are unioned with the global
+          # macro definitions. It is an error to have conflicting definitions.
+          defines: *macro_defines
+          # This specifies the verification tasks for the benchmark variant.
+          # Either `verification_tasks` must be specified for each variant
+          # or the global `verification_tasks` must be used.
+          #
+          # FIXME: There is no way to specify this using JSON-schema so
+          # this has to be enforced after validation against the schema.
+          verification_tasks: *verification_tasks
   verification_tasks: *verification_tasks
 required:
   - architectures
@@ -174,4 +187,3 @@ required:
   - name
   - sources
   - schema_version
-  - verification_tasks
