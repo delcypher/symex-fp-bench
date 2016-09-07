@@ -10,9 +10,19 @@ name: unsigned_overflow64_example
 schema_version: 0
 sources:
   - main.c
-verification_tasks:
-  no_assert_fail:
-    correct: true
+variants:
+  foo:
+    defines:
+      FOX: "5"
+    verification_tasks:
+      no_assert_fail:
+        correct: true
+  bar:
+    defines:
+      XXX: "xx"
+    verification_tasks:
+      no_assert_fail:
+        correct: false
 comments: |
   This benchmark checks that an unsigned 64-bit integer
   correctly overflows.

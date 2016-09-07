@@ -63,21 +63,29 @@ def getBenchmarks(benchSpec):
   benchmarkObjs = []
   if 'variants' in benchSpec:
     # Create a ``Benchmark`` object from each variant
-    globalDefines = []
+    globalDefines = {}
     if 'defines' in benchSpec:
-      globalDefines.extend(benchSpec['defines'])
+      globalDefines.update(benchSpec['defines'])
     globalName = benchSpec['name']
-    for variantName, defines in benchSpec['variants'].items():
+    for variantName, variantProperties in benchSpec['variants'].items():
       # Make a copy to work with
       benchSpecCopy = copy.deepcopy(benchSpec)
       # Modify the copied benchmark specification so it looks
       # like a single benchmark
-      benchmarkDefines = list(globalDefines)
-      benchmarkDefines.extend(defines)
+      benchmarkDefines = dict(globalDefines)
+      if 'defines' in variantProperties:
+        benchmarkDefines.update(variantProperties['defines'])
       benchmarkName = "{}_{}".format(globalName, variantName)
       del benchSpecCopy['variants']
       benchSpecCopy['defines'] = benchmarkDefines
       benchSpecCopy['name'] = benchmarkName
+
+      if 'verification_tasks' in variantProperties:
+        assert 'verification_tasks' not in benchSpecCopy
+        benchSpecCopy['verification_tasks'] = copy.deepcopy(variantProperties['verification_tasks'])
+      else:
+        assert 'verification_tasks' in benchSpecCopy
+
       benchmarkObjs.append(Benchmark(benchSpecCopy))
   else:
     # Single benchmark
