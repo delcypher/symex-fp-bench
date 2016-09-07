@@ -51,6 +51,7 @@ def main(args):
   except Exception as e:
     _logger.error('Exception raised whilst loading benchmark specification file')
     _logger.error(str(e))
+    raise e
 
   # Get absolute path to benchmark specification file
   bSpecPath = os.path.realpath(pArgs.bench_spec_file.name)
