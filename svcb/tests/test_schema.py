@@ -242,7 +242,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architectures': ['x86_64'],
       'categories': [],
-      'defines': ['FOO', 'BAR=0'],
+      'defines': {'FOO': None, 'BAR':'0'},
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -257,7 +257,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architectures': ['x86_64'],
       'categories': [],
-      'defines': ['badmacro name', 'BAR=0'],
+      'defines': {'badmacro name': None, 'BAR':'0'},
       'language': 'c99',
       'memory_model': 'precise',
       'name': 'mybenchmark',
@@ -265,7 +265,7 @@ class TestSchema(unittest.TestCase):
       'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
-    msgRegex = r"'badmacro name' does not match"
+    msgRegex = r"'badmacro name' was unexpected"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
@@ -279,8 +279,8 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'memory_model': 'precise',
       'sources': ['a.c', 'b.c'],
-      'variants': { 'config1': ['FOO' 'BAR=BAZ', 'NUM=0'],
-                   'config2' : ['NUM=1']},
+      'variants': { 'config1': {'FOO':None, 'BAR':'BAZ', 'NUM':'0'},
+                    'config2' : {'NUM':'1'}},
       'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
@@ -295,11 +295,11 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'variants': { 'config1': ['foo=bad value'] },
+      'variants': { 'config1': {'foo':'bad value'}},
       'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"'foo=bad value' does not match"
+    msgRegex= r"'foo' was unexpected"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
@@ -313,7 +313,7 @@ class TestSchema(unittest.TestCase):
       'memory_model': 'precise',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'variants': { 'bad build variant name': ['FOO=1'] },
+      'variants': { 'bad build variant name': {} },
       'verification_tasks': { 'no_reach_error_function': {'correct': True} },
     }
     self.appendSchemaVersion(s)

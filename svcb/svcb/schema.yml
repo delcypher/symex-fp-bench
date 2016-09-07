@@ -13,11 +13,23 @@ type: object
 # Definitions contains common parts of the schema for reuse
 definitions:
   defines: &macro_defines
-    type: array
-    items:
-      # These items are macro definitions
-      type: string
-      pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
+    type: object
+    patternProperties:
+      "^[A-Z][A-Z0-9_]+":
+          anyOf:
+            -
+              # A definition without any value
+              type: "null"
+            -
+              # A definition with a value
+              type: string
+              pattern: "[A-Za-z0-9]+"
+    additionalProperties: false
+#    type: array
+#    items:
+#      # These items are macro definitions
+#      type: string
+#      pattern: "^[A-Z][A-Z0-9_]+(=[A-Za-z0-9]+)?$"
   verification_task_properties: &verification_task_properties
     type: object
     properties:
