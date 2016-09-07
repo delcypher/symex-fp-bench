@@ -287,6 +287,44 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateVariantWithCounterExamples(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': {
+        'config1': {
+          'defines': {
+              'FOO':None,
+              'BAR':'BAZ',
+              'NUM':'0'
+            },
+          'verification_tasks': {
+            'no_assert_fail': {
+              'correct': False,
+              'counter_examples': [
+                {
+                  'description': 'This is the only error',
+                  'locations': [
+                    {
+                      'file': 'a.c',
+                      'line': 1,
+                      'column': 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateInvalidVariantWithDifferentVerificationTasks(self):
     s = {
       'architectures': ['x86_64'],
@@ -679,6 +717,383 @@ class TestSchema(unittest.TestCase):
     }
     self.appendSchemaVersion(s)
     msgRegex= r"\['foo',\s*'foo'\]\s*has\s+non-unique\s+elements"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleCounterExample(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleCounterExampleWithColumn(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1,
+                  'column': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidSimpleCounterExampleMissingFile(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'locations': [
+                {
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'file' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidSimpleCounterExampleMissingLine(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c'
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'line' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateMultipleCounterExamples(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'description':'This bug is hit early on',
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            },
+            {
+              'description':'This bug is hit early on',
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c',
+                  'line': 2
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleCounterExampleWithDescription(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'description': 'Simple bug',
+              'locations': [
+                {
+                  'description': 'This is where the assert failed',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleCounterExampleWithMultipleLocations(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'description': 'Simple bug',
+              'locations': [
+                {
+                  'description': 'This is where the assert failed in thread 0',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                },
+                {
+                  'description': 'This is where the assert failed in thread 1',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidSimpleCounterExampleWithMultipleDuplicateLocations(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'description': 'Simple bug',
+              'locations': [
+                {
+                  'description': 'This is where the assert failed',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                },
+                {
+                  'description': 'This is where the assert failed',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"has non-unique elements"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+
+  def testInvalidSimpleCounterExampleWithDuplicateCounterExamples(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': [
+            {
+              'description': 'Simple bug',
+              'locations': [
+                {
+                  'description': 'This is where the assert failed',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            },
+            {
+              'description': 'Simple bug',
+              'locations': [
+                {
+                  'description': 'This is where the assert failed',
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"has non-unique elements"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidEmptyCounterExamples(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'counter_examples': []
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"\[\] is too short"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidSimpleCounterExampleWithCorrectBenchmark(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': True,
+          # There should not be a counter example if the benchmark is correct
+          'counter_examples': [
+            {
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Counter examples should not be provided for a benchmark where 'correct' is 'True'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidSimpleCounterExampleWithUnknownBenchmark(self):
+    s = {
+      'architectures': 'any',
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': None,
+          # There should not be a counter example if the benchmark's correctness
+          # is unknown
+          'counter_examples': [
+            {
+              'locations': [
+                {
+                  'file': 'a_is_a_good_name.c',
+                  'line': 1
+                }
+              ]
+            }
+          ]
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Counter examples should not be provided for a benchmark where 'correct' is 'None'"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):

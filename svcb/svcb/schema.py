@@ -121,6 +121,22 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
           else:
             macrosForVariant.add(macroName)
 
+  # Check that counter examples are only specified when the benchmark is declared as incorrect
+  if 'verification_tasks' in benchSpec:
+    checkVerificationTasks(benchSpec['verification_tasks'])
+  if 'variants' in benchSpec:
+      for (variantName, variantProperties) in benchSpec['variants'].items():
+        assert isinstance(variantProperties, dict)
+        if 'verification_tasks' in variantProperties:
+          checkVerificationTasks(variantProperties['verification_tasks'])
+
+def checkVerificationTasks(tasks):
+  assert isinstance(tasks, dict)
+  for (taskName, taskProperties) in tasks.items():
+    if taskProperties['correct'] or taskProperties['correct'] == None:
+      # Counter examples should not be provided
+      if 'counter_examples' in taskProperties:
+        raise BenchmarkSpecificationValidationError("Counter examples should not be provided for a benchmark where 'correct' is '{}'".format(taskProperties['correct']))
 
 def upgradeBenchmarkSpeciationToVersion(benchSpec, schemaVersion):
   """
