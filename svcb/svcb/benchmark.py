@@ -14,7 +14,7 @@ class Benchmark(object):
     if 'comments' not in self._data:
       self._data['comments'] = ""
     if 'defines' not in self._data:
-      self._data['defines'] = []
+      self._data['defines'] = {}
     if 'dependencies' not in self._data:
       self._data['dependencies'] = {}
 
