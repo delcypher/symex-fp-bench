@@ -307,6 +307,24 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateInvalidVariantWithClashingDefine(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'defines': {'FOO': 'XXX'},
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': { 'config1': { 'defines': {'FOO':None, 'BAR':'BAZ', 'NUM':'0'}, 'verification_tasks': { 'no_assert_fail': {'correct': True} }},
+      },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Macro 'FOO' cannot be specified multiple times"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateInvalidVariantWithMissingVerificationTasks(self):
     s = {
       'architectures': ['x86_64'],

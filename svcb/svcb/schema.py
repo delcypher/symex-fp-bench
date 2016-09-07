@@ -107,6 +107,19 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
         raise BenchmarkSpecificationValidationError(
         "'verification_tasks' must be specified for variant '{}'".format(variantName))
 
+  # Check that there are no macro definition conflicts
+  globalMacroNames=set()
+  if 'defines' in benchSpec:
+    globalMacroNames.update(benchSpec['defines'].keys())
+  if 'variants' in benchSpec:
+    for (variantName, variantProperties) in benchSpec['variants'].items():
+      macrosForVariant = copy.deepcopy(globalMacroNames)
+      if 'defines' in variantProperties:
+        for macroName in variantProperties['defines'].keys():
+          if macroName in macrosForVariant:
+            raise BenchmarkSpecificationValidationError("Macro '{}' cannot be specified multiple times".format(macroName))
+          else:
+            macrosForVariant.add(macroName)
 
 
 def upgradeBenchmarkSpeciationToVersion(benchSpec, schemaVersion):
