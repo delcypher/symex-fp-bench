@@ -158,9 +158,14 @@ properties:
       # It is not possible to reach a state in the program where a pointer to
       # invalid memory is derefenced.
       "no_invalid_deref": *verification_task_properties
-      # It is not possible to reach a a state in the program an integer
+      # It is not possible to reach a state in the program where an integer
       # division by zero occurs.
       "no_integer_division_by_zero": *verification_task_properties
+      # It is not possible to reach a state in the program where an integer
+      # shift operation (i.e. left shift and, logical and arithmetic right
+      # shift)  occurs where the amount to shift by is greater than the
+      # bitwidth of the value being shifted.
+      "no_overshift": *verification_task_properties
 required:
   - architectures
   - categories
