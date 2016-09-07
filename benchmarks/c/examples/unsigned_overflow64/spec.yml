@@ -11,7 +11,7 @@ schema_version: 0
 sources:
   - main.c
 verification_tasks:
-  no_reach_error_function:
+  no_assert_fail:
     correct: true
 comments: |
   This benchmark checks that an unsigned 64-bit integer

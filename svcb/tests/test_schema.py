@@ -33,7 +33,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -47,7 +47,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -60,7 +60,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -73,7 +73,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex = r"\['any', 'x86_64'\] is not valid under any of the given schemas"
@@ -89,7 +89,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"\['foo'\] is not valid under any of the given schemas"
@@ -105,7 +105,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c++97',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'c\+\+97' is not one of"
@@ -121,7 +121,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'schema_version': 123456
     }
     msgRegex= r"Schema version used by benchmark \(\d+\) does not match the currently support schema \(\d+\)"
@@ -137,7 +137,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a bad name.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'a bad name.c' does not match"
@@ -153,7 +153,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['../a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"not allowed for '\.\./a.c'"
@@ -169,7 +169,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': [],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Failed validating 'minItems' in schema\['properties'\]\['sources'\]"
@@ -184,7 +184,7 @@ class TestSchema(unittest.TestCase):
       'categories': [],
       'language': 'c99',
       'name': 'mybenchmark',
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'sources' is a required property"
@@ -200,7 +200,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c', 'a.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"\['a.c', 'b.c', 'a.c'\] has non-unique elements"
@@ -216,7 +216,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'my bad benchmark name',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'my bad benchmark name' does not match"
@@ -233,7 +233,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -247,7 +247,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex = r"'badmacro name' was unexpected"
@@ -265,7 +265,7 @@ class TestSchema(unittest.TestCase):
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': {'FOO':None, 'BAR':'BAZ', 'NUM':'0'},
                     'config2' : {'NUM':'1'}},
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -279,7 +279,7 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'config1': {'foo':'bad value'}},
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'foo' was unexpected"
@@ -296,7 +296,7 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'variants': { 'bad build variant name': {} },
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Additional properties are not allowed \('bad build variant name'"
@@ -343,7 +343,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': {'no_reach_error_function': {}},
+      'verification_tasks': {'no_assert_fail': {}},
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'correct' is a required property"
@@ -359,7 +359,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': {'no_reach_error_function': {'correct': 'XXX'}},
+      'verification_tasks': {'no_assert_fail': {'correct': 'XXX'}},
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'XXX' is not valid under any of the given schemas"
@@ -375,7 +375,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': {'no_reach_error_function': {'correct': True}},
+      'verification_tasks': {'no_assert_fail': {'correct': True}},
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -388,7 +388,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': {'no_reach_error_function': {'correct': False}},
+      'verification_tasks': {'no_assert_fail': {'correct': False}},
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -401,7 +401,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': {'no_reach_error_function': {'correct': None}},
+      'verification_tasks': {'no_assert_fail': {'correct': None}},
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
@@ -414,7 +414,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': {'no_reach_error_function': {'correct': True, 'crazy': True}},
+      'verification_tasks': {'no_assert_fail': {'correct': True, 'crazy': True}},
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Additional properties are not allowed \('crazy' was unexpected\)"
@@ -447,7 +447,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"Failed validating 'type' in schema\['properties'\]\['comments'\]"
@@ -463,7 +463,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     newBenchSpec = schema.upgradeBenchmarkSpecificationToSchema(s)
@@ -480,7 +480,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'foo_bar': 'bar',
     }
     self.appendSchemaVersion(s)
@@ -497,7 +497,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'dependencies': { 'pthreads': {} },
     }
     self.appendSchemaVersion(s)
@@ -511,7 +511,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'dependencies': { 'openmp': {} },
     }
     self.appendSchemaVersion(s)
@@ -525,7 +525,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'dependencies': { 'pthreads': {'version': '4' }}, # Should we enforce what the version string should look like?
     }
     self.appendSchemaVersion(s)
@@ -539,7 +539,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'dependencies': { 'xxx': None },
     }
     self.appendSchemaVersion(s)
@@ -556,7 +556,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'dependencies': { },
     }
     self.appendSchemaVersion(s)
@@ -570,7 +570,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
       'dependencies': ['xxx', 'yyy'],
     }
     self.appendSchemaVersion(s)
@@ -586,7 +586,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"'categories' is a required property"
@@ -602,7 +602,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
-      'verification_tasks': { 'no_reach_error_function': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
     msgRegex= r"\['foo',\s*'foo'\]\s*has\s+non-unique\s+elements"
