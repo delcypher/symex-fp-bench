@@ -9,16 +9,20 @@ sources:
   - main.c
 # This declares four variants. Each variant is treated as a separate benchmark.
 variants:
+  # First variant
   klee_no_bug:
     categories:
       - use_in_study
     defines:
       KLEE: null
+    description: >
+      This variant demonstrates a correct benchmark that require's KLEE's runtime.
     dependencies:
       klee_runtime: {}
     verification_tasks:
       no_assert_fail:
         correct: true
+  # Second variant
   klee_bug:
     categories:
       - use_in_study
@@ -27,6 +31,8 @@ variants:
       BUG: null
     dependencies:
       klee_runtime: {}
+    description: >
+      This variant demonstrates an incorrect benchmark that requires KLEE's runtime.
     verification_tasks:
       no_assert_fail:
         correct: false
@@ -38,13 +44,19 @@ variants:
                 description: 'Failable assertion'
                 file: 'main.c'
                 line: 16
+  # Third variant
   non_klee_no_bug:
+    description: >
+      This variant demonstrates a correct benchmark that does not require KLEE's runtime.
     verification_tasks:
       no_assert_fail:
         correct: true
+  # Forth variant
   non_klee_bug:
     defines:
       BUG: null
+    description: >
+      This variant demonstrates an incorrect benchmark that does not require KLEE's runtime.
     verification_tasks:
       no_assert_fail:
         correct: false

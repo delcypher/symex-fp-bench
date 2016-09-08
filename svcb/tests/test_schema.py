@@ -272,6 +272,35 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateSimpleVariantsWithDescription(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': {
+        'config1': {
+          'defines': {
+            'FOO':None,
+            'BAR':'BAZ',
+            'NUM':'0'
+          },
+          'description': 'This is config1'
+        },
+        'config2': {
+          'defines': {
+            'NUM':'1'
+          },
+          'description': 'This is config2'
+        }
+      },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateVariantWithDifferentVerificationTasks(self):
     s = {
       'architectures': ['x86_64'],

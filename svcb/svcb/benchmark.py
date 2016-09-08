@@ -82,6 +82,9 @@ def getBenchmarks(benchSpec):
       globalCategories = benchSpec['categories']
       # Ensure the categories are always sorted so clients can rely on this behaviour
       globalCategories.sort()
+    globalDescription = ""
+    if 'description' in benchSpec:
+      globalDescription += benchSpec['description']
     globalName = benchSpec['name']
     for variantName, variantProperties in benchSpec['variants'].items():
       # Make a copy to work with
@@ -91,6 +94,7 @@ def getBenchmarks(benchSpec):
       benchmarkDefines = dict(globalDefines)
       benchmarkDependencies = dict(globalDependencies)
       benchmarkCategories = list(globalCategories)
+      benchmarkDescription = str(globalDescription)
       if 'defines' in variantProperties:
         benchmarkDefines.update(variantProperties['defines'])
       if 'dependencies' in variantProperties:
@@ -101,12 +105,17 @@ def getBenchmarks(benchSpec):
         benchmarkCategories = set(benchmarkCategories)
         benchmarkCategories = list(benchmarkCategories)
         benchmarkCategories.sort()
+      if 'description' in variantProperties:
+        # Make the description for the benchmark be the concatenation
+        # of the global and variant description.
+        benchmarkDescription += "\n{}".format(variantProperties['description'])
       benchmarkName = "{}_{}".format(globalName, variantName)
       del benchSpecCopy['variants']
       benchSpecCopy['defines'] = benchmarkDefines
       benchSpecCopy['name'] = benchmarkName
       benchSpecCopy['dependencies'] = benchmarkDependencies
       benchSpecCopy['categories'] = benchmarkCategories
+      benchSpecCopy['description'] = benchmarkDescription
 
       if 'verification_tasks' in variantProperties:
         assert 'verification_tasks' not in benchSpecCopy

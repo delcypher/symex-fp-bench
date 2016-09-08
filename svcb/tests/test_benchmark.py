@@ -52,6 +52,7 @@ class TestBenchmark(unittest.TestCase):
       'variants': {
         'foo': {
           'verification_tasks':{ 'no_assert_fail': {'correct': True} },
+          'description': 'This is foo',
           'defines': {'FAIL':'0'},
           'dependencies': { 'pthreads': {} },
           'categories': ['foo_category', 'cheese'],
@@ -77,7 +78,7 @@ class TestBenchmark(unittest.TestCase):
     # Check foo
     self.assertEqual(fooBenchmark.architectures, ['x86_64'])
     self.assertEqual(fooBenchmark.categories, {'cheese','foo_category', 'xxx'})
-    self.assertEqual(fooBenchmark.description, 'global comment')
+    self.assertEqual(fooBenchmark.description, 'global comment\nThis is foo')
     self.assertEqual(fooBenchmark.defines, {'DUMMY':'1', 'FAIL':'0'})
     self.assertEqual(fooBenchmark.dependencies, {'klee_runtime':{}, 'pthreads':{}})
     self.assertEqual(fooBenchmark.language, 'c99')

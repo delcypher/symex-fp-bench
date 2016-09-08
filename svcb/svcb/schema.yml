@@ -222,6 +222,9 @@ properties:
           # variant are unioned with the global `dependencies`. The additional
           # dependencies and global dependencies must be disjoint.
           dependencies: *dependencies
+          # Additional description of this variant.
+          description:
+            type: string
           # This specifies the verification tasks for the benchmark variant.
           # Either `verification_tasks` must be specified for each variant
           # or the global `verification_tasks` must be used.
