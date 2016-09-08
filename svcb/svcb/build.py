@@ -72,10 +72,10 @@ endif()
         declStr += "{indent}{indent}{source_file}\n".format(indent=cmakeIndent, source_file=os.path.join(sourceRootDir, source))
       declStr += "  )\n"
       # Emit linking info
-      declStr += "{indent}target_link_libraries({target_name} PRIVATE {libs})\n".format(
-        indent=cmakeIndent,
-        target_name=targetName,
-        libs="svcomp_runtime")
+      #declStr += "{indent}target_link_libraries({target_name} PRIVATE {libs})\n".format(
+      #  indent=cmakeIndent,
+      #  target_name=targetName,
+      #  libs="svcomp_runtime")
       # Emit custom macro defintions
       if len(b.defines) > 0:
         declStr += "{indent}target_compile_definitions({target_name} PRIVATE\n".format(
@@ -142,6 +142,13 @@ def generate_dependency_decls(benchmarkObj, targetName, enableTargetCMakeVariabl
         enableTargetCMakeVariable,
         disabledTargetReasonsCMakeVariable
       )
+    elif depName == 'svcomp_klee_runtime':
+      decl = generate_svcomp_klee_runtime_dependency_code(
+        info,
+        targetName,
+        enableTargetCMakeVariable,
+        disabledTargetReasonsCMakeVariable
+      )
     else:
       msg = 'Unhandled benchmark dependency "{}"'.format(depName)
       _logger.error(msg)
@@ -196,5 +203,19 @@ endif()
       indent=cmakeIndent)
   addDepDecl = "{indent}target_include_directories({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_INCLUDE_DIR}})\n".format(indent=cmakeIndent, targetName=targetName)
   addDepDecl += "{indent}target_link_libraries({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
+  return (guardDecl, addDepDecl)
+
+def generate_svcomp_klee_runtime_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
+  guardDecl = """
+if (NOT KLEE_NATIVE_RUNTIME_FOUND)
+{indent}set({enableTargetCMakeVariable} FALSE)
+{indent}list(APPEND {disabledTargetReasonsCMakeVariable} "KLEE runtime not available")
+endif()
+  \n""".format(enableTargetCMakeVariable=enableTargetCMakeVariable,
+      disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
+      indent=cmakeIndent)
+  addDepDecl = "{indent}target_link_libraries({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
+  # svcomp_klee_runtime is an OBJECT library so we can't use `target_link_libraries`.
+  addDepDecl += "{indent}target_sources({targetName} PRIVATE $<TARGET_OBJECTS:svcomp_klee_runtime>)\n".format(indent=cmakeIndent, targetName=targetName)
   return (guardDecl, addDepDecl)
 

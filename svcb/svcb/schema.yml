@@ -36,6 +36,7 @@ definitions:
     additionalProperties: false
     properties:
     # Possible dependencies
+      svcomp_klee_runtime: *dependency_properties
       klee_runtime: *dependency_properties
       pthreads: *dependency_properties
       openmp: *dependency_properties
@@ -102,6 +103,8 @@ definitions:
       # It is not possible to reach an assertion in the program where the
       # assertion will fail.
       "no_assert_fail": *verification_task_properties
+      # It is not possible to reach an error function (i.e. `abort()`)
+      "no_reach_error_function": *verification_task_properties
       # It is not possible to reach a state in the program where free is called
       # on an invalid address.
       "no_invalid_free": *verification_task_properties

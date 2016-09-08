@@ -1,0 +1,31 @@
+architectures:
+  - x86_64
+categories:
+  - examples
+dependencies:
+  svcomp_klee_runtime: {}
+language: c99
+name: simple_svcomp
+schema_version: 0
+sources:
+  - main.c
+variants:
+  klee_no_bug:
+    verification_tasks:
+      no_reach_error_function:
+        correct: true
+  klee_bug:
+    defines:
+      BUG: null
+    verification_tasks:
+      no_reach_error_function:
+        correct: false
+        counter_examples:
+          -
+            description: 'Can reach __VERIFIER_error'
+            locations:
+              -
+                file: 'main.c'
+                line: 16
+comments: |
+  This benchmark illustrates using the SV-COMP functions.

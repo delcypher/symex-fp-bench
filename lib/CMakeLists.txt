@@ -1,1 +1,1 @@
-add_subdirectory(svcomp_runtime)
+add_subdirectory(svcomp_klee_runtime)

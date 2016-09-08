@@ -3,26 +3,17 @@
 */
 
 // This provides a basic implementation of the SV-COMP
-// runtime functions. It currently only exists to provide
-// stub implementations that benchmarks can link against
-// so we can check we can succesfully build standalone
-// programs. In the future we could actually turn this
-// runtime library into an approximate replay framework.
-#include "svcomp.h"
+// runtime functions that calls into KLEE's runtime functions.
+#include "svcomp/svcomp.h"
+#include "klee/klee.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-// We have to choose a concrete implementation here. For
-// now just set all bytes to zero.
 #define SVCOMP_NONDET_DEFN_D(NAME,T) \
 T __VERIFIER_nondet_ ## NAME() { \
   T initialValue; \
-  int byteOffset = 0; \
-  uint8_t* initialValueAsByte = (uint8_t*) &initialValue; \
-  for (; byteOffset < sizeof(T); ++byteOffset) { \
-    initialValueAsByte[byteOffset] = 0; \
-  } \
+  klee_make_symbolic(&initialValue, sizeof(T), ""); \
   return initialValue; \
 }
 
@@ -49,21 +40,20 @@ SVCOMP_NONDET_DEFN(unsigned)
 SVCOMP_NONDET_DEFN_D(ushort, unsigned short)
 
 void __VERIFIER_assume(int expression) {
-  if (!expression) {
-    fprintf(stderr, "__VERIFIER_assume(): Assumption not met. Exiting\n");
-    exit(0);
-  }
+  klee_assume(expression);
 }
 
+
+// Provide proto-type to suppress -Werror=implicit-function-declaration
+void __assert_fail(const char*, const char*, unsigned int, const char*);
+
 void __VERIFIER_assert(int expression) {
-  if (!expression) {
-    fprintf(stderr, "__VERIFIER_assert(): Assertion failed\n");
-    __VERIFIER_error();
-  }
+  klee_assert(expression);
 }
 
 SVCOMP_NO_RETURN void __VERIFIER_error() {
-  fprintf(stderr, "__VERIFIER_error(): Called\n");
+  // FIXME: klee_report_error is not implemented in libkleeRuntest.
+  // klee_report_error(__FILE__, __LINE__, "__VERIFIER_error reached","");
   abort();
 }
 
