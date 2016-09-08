@@ -43,7 +43,7 @@ Before building the benchmarks you will need the following installed:
 * [Python](https://www.python.org/) >= 2.7
 * [jsonschema](https://pypi.python.org/pypi/jsonschema) and [pyyaml](https://pypi.python.org/pypi/PyYAML) Python modules
 
-## Building benchmarks
+## Building benchmarks as native binaries
 
 Here are the basic steps for building the benchmarks.
 
@@ -60,6 +60,25 @@ directory containing `include/klee.h`. You can get and build KLEE from [GitHub](
 Note by default it is enforced that the KLEE runtime be available because the majority of the benchmarks will require it.
 However you can change this by passing `-DKLEE_NATIVE_RUNTIME_REQUIRED=FALSE` when invoking CMake. Doing this will cause
 only the benchmarks that don't need the KLEE runtime.
+
+
+## Building benchmarks as LLVM bitcode
+
+KLEE can't run native binaries. Instead it runs LLVM bitcode. To build the benchmarks as LLVM bitcode you should follow
+the steps above but use [Whole Program LLVM](https://github.com/travitch/whole-program-llvm) as the compiler rather
+than your normal host compiler.
+
+The invocation to CMake will probably look something like this:
+
+```
+$ export WLLVM_COMPILER=clang
+$ mkdir build_llvm
+$ cd build_llvm
+$ CC=wllvm CXX=wllvm++ KLEE_NATIVE_RUNTIME_LIB_DIR=<KLEE_RUNTIME_LIB_DIR> KLEE_NATIVE_RUNTIME_INCLUDE_DIR=<KLEE_RUNTIME_INCLUDE_DIR>  cmake ../
+$ make
+```
+
+then you would run the `extract-bc` tool that comes with Whole Program LLVM to get the bitcode file that corresponds to the native binary.
 
 ## Running schema tests
 
