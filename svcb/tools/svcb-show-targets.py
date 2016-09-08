@@ -28,6 +28,12 @@ def main(args):
   parser.add_argument('bench_spec_file',
                       help='Benchmark specification file',
                       type=argparse.FileType('r'))
+  parser.add_argument('--pretty-print-python-data-structure',
+                      '-p',
+                      dest='pretty_print_python_data_structure',
+                      action='store_true',
+                      default=False,
+                      help='Print benchmarks as a Python object dump rather than YAML')
 
   pArgs = parser.parse_args()
   logLevel = getattr(logging, pArgs.log_level.upper(),None)
@@ -49,8 +55,13 @@ def main(args):
   _logger.debug('Found {} benchmark(s)'.format(len(benchmarkObjs)))
   # Emit as a stream of YAML documents
   for index, benchmark in enumerate(benchmarkObjs):
-    print("---")
-    print("# benchmark {} of {}".format(index+1, len(benchmarkObjs)))
-    print(yaml.dump(benchmark.getInternalRepr()))
+    if pArgs.pretty_print_python_data_structure:
+      print("#---")
+      print("# benchmark {} of {}".format(index+1, len(benchmarkObjs)))
+      print(pprint.pformat(benchmark.getInternalRepr()))
+    else:
+      print("---")
+      print("# benchmark {} of {}".format(index+1, len(benchmarkObjs)))
+      print(yaml.dump(benchmark.getInternalRepr()))
 if __name__ == '__main__':
   sys.exit(main(sys.argv))
