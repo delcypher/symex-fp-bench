@@ -27,6 +27,13 @@ Having such a format is useful because
 * It is clear what properties should be verified/checked for.
 * It is easy to gather statistics on the benchmarks.
 
+A key concept to understand with this format is that a `spec.yml` can declare
+multiple benchmarks by declaring multiple variants. If no variants are specified
+or if there is only one variant the `spec.yml` file only declares a single benchmark.
+
+Having variants is useful for having benchmarks where small changes guarded by macro
+definitions create different versions of a benchmark from the same source files.
+
 ## Requirements
 
 Before building the benchmarks you will need the following installed:
