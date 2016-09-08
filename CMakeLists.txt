@@ -85,14 +85,6 @@ endif()
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
 ###############################################################################
-# Documentation
-###############################################################################
-option(BUILD_DOCS "Build documentation" ON)
-if (BUILD_DOCS)
-  add_subdirectory(docs)
-endif()
-
-###############################################################################
 # Setup variables used by auto generated CMake files
 ###############################################################################
 include(CheckCCompilerFlag)
