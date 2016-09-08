@@ -96,6 +96,8 @@ definitions:
                   - line
           required:
             - locations
+      description:
+        type: string
     additionalProperties: false
     required:
       - correct

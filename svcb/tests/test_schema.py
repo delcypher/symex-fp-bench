@@ -47,7 +47,7 @@ class TestSchema(unittest.TestCase):
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
-      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+      'verification_tasks': { 'no_assert_fail': {'correct': True, 'description':'awesome'}},
     }
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
