@@ -52,6 +52,14 @@ class Benchmark(object):
   def categories(self):
     return self._data['categories']
 
+  @property
+  def comments(self):
+    return self._data['comments']
+
+  @property
+  def verificationTasks(self):
+    return self._data['verification_tasks']
+
   def isLanguageC(self):
     return not self.isLanguageCXX()
 
