@@ -198,6 +198,12 @@ if (KLEE_NATIVE_RUNTIME_REQUIRED)
 	endif()
 endif()
 
+# Check if a separate C math library exists
+find_library(C_MATH_LIBRARY
+  NAMES libm.so libm.a # Prefer dynamic library over static library
+  DOC "Separate C Math library"
+)
+
 ###############################################################################
 # Add add_benchmark() macro
 ###############################################################################

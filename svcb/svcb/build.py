@@ -149,6 +149,13 @@ def generate_dependency_decls(benchmarkObj, targetName, enableTargetCMakeVariabl
         enableTargetCMakeVariable,
         disabledTargetReasonsCMakeVariable
       )
+    elif depName == 'cmath':
+      decl = generate_cmath_dependency_code(
+        info,
+        targetName,
+        enableTargetCMakeVariable,
+        disabledTargetReasonsCMakeVariable
+      )
     else:
       msg = 'Unhandled benchmark dependency "{}"'.format(depName)
       _logger.error(msg)
@@ -218,4 +225,13 @@ endif()
   # svcomp_klee_runtime is an OBJECT library so we can't use `target_link_libraries`.
   addDepDecl += "{indent}target_sources({targetName} PRIVATE $<TARGET_OBJECTS:svcomp_klee_runtime>)\n".format(indent=cmakeIndent, targetName=targetName)
   return (guardDecl, addDepDecl)
+
+def generate_cmath_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
+  addDepDecl = """
+{indent}if (C_MATH_LIBRARY)
+{indent}{indent}target_link_libraries({targetName} PRIVATE ${{C_MATH_LIBRARY}})
+{indent}endif()
+  \n""".format(indent=cmakeIndent, targetName=targetName)
+
+  return ("", addDepDecl)
 

@@ -1,0 +1,30 @@
+architectures:
+  - x86_64
+categories:
+  - examples
+dependencies:
+  cmath: {}
+language: c99
+name: simple_math
+schema_version: 0
+sources:
+  - main.c
+variants:
+  klee_no_bug:
+    defines:
+      KLEE: null
+    dependencies:
+      klee_runtime: {}
+    description: >
+      This variant demonstrates an correct benchmark that requires KLEE's runtime.
+    verification_tasks:
+      no_assert_fail:
+        correct: true
+  non_klee_no_bug:
+    description: >
+      This variant demonstrates a correct benchmark that does not require KLEE's runtime.
+    verification_tasks:
+      no_assert_fail:
+        correct: true
+description: >
+  These benchmarks are just simple examples that require the C Math library.
