@@ -629,6 +629,75 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateGlobalAndVariantDependency(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+      'variants': {
+        'foo': {
+          'defines': {'ENABLE_PTHREADS': None },
+          'dependencies': {
+            'pthreads': {}
+          }
+        }
+      },
+      'dependencies': { 'openmp': {} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidGlobalAndVariantDependency(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+      'variants': {
+        'foo': {
+          'defines': {'ENABLE_OPENMP': None },
+          'dependencies': {
+            'openmp': {'version':'4'}
+          }
+        }
+      },
+      'dependencies': { 'pthreads': {} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testInvalidGlobalAndVariantDependency(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+      'variants': {
+        'foo': {
+          'defines': {'ENABLE_OPENMP': None },
+          'dependencies': {
+            'openmp': {'version':'4'}
+          }
+        }
+      },
+      'dependencies': { 'openmp': {'version':'3'} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"The '{'openmp'}' dependencies cannot be specified globally and for variant 'foo'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidatePthreadsDepWithVersion(self):
     s = {
       'architectures': ['x86_64'],

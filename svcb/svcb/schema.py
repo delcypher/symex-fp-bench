@@ -125,10 +125,30 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
   if 'verification_tasks' in benchSpec:
     checkVerificationTasks(benchSpec['verification_tasks'])
   if 'variants' in benchSpec:
+    for (variantName, variantProperties) in benchSpec['variants'].items():
+      assert isinstance(variantProperties, dict)
+      if 'verification_tasks' in variantProperties:
+        checkVerificationTasks(variantProperties['verification_tasks'])
+
+  # Check that the dependencies of each variant are disjoint with respect to
+  # the global dependencies.
+  if 'variants' in benchSpec:
+    globalDependencies = set()
+    if 'dependencies' in benchSpec:
+      globalDependencies.update(benchSpec['dependencies'].keys())
+    if len(globalDependencies) > 0:
       for (variantName, variantProperties) in benchSpec['variants'].items():
         assert isinstance(variantProperties, dict)
-        if 'verification_tasks' in variantProperties:
-          checkVerificationTasks(variantProperties['verification_tasks'])
+        if 'dependencies' in variantProperties:
+          variantDependencies = set(variantProperties['dependencies'].keys())
+          intersectionOfDependencies = globalDependencies.intersection(variantDependencies)
+          if len(intersectionOfDependencies) > 0:
+            raise BenchmarkSpecificationValidationError(
+              "The '{}' dependencies cannot be specified globally and for variant '{}'".format(
+              intersectionOfDependencies,
+              variantName))
+    
+  return
 
 def checkVerificationTasks(tasks):
   assert isinstance(tasks, dict)

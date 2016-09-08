@@ -211,6 +211,10 @@ properties:
           # The macro definitions provided here are unioned with the global
           # macro definitions. It is an error to have conflicting definitions.
           defines: *macro_defines
+          # Additional dependencies of this variant. The dependencies of this
+          # variant are unioned with the global `dependencies`. The additional
+          # dependencies and global dependencies must be disjoint.
+          dependencies: *dependencies
           # This specifies the verification tasks for the benchmark variant.
           # Either `verification_tasks` must be specified for each variant
           # or the global `verification_tasks` must be used.
