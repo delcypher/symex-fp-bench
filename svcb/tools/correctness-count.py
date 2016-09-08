@@ -25,6 +25,7 @@ def main(args):
   parser.add_argument("directory",
                       type=str,
                       help="Directory to traverse")
+  parser.add_argument("--categories", type=str, nargs='+', default=None, help='Only gather process benchmarks belonging to the specified categories')
   pargs = parser.parse_args(args)
   logLevel = getattr(logging, pargs.log_level.upper(),None)
   logging.basicConfig(level=logLevel)
@@ -38,7 +39,10 @@ def main(args):
   benchmarkFileParseSuccess = set()
   benchmarkFileParseFailures = set()
   benchmarkNames = set()
+  benchmarksSkipped = set()
   verificationTaskMap = { }
+
+  onlyProcessCategories = set(pargs.categories) if pargs.categories != None else set()
 
   # Traverse directory
   for dirpath, dirnames, filenames in os.walk(pargs.directory):
@@ -67,6 +71,12 @@ def main(args):
         for benchmarkObj in benchmarkObjs:
           assert benchmarkObj.name not in benchmarkNames
           benchmarkNames.add(benchmarkObj.name)
+          if pargs.categories != None:
+            if len(onlyProcessCategories.intersection(benchmarkObj.categories)) == 0:
+              # Skip
+              benchmarksSkipped.add(benchmarkObj)
+              continue
+
 
           # Verification tasks
           for (task, taskProperties) in benchmarkObj.verificationTasks.items():
@@ -79,6 +89,8 @@ def main(args):
   print("# of file(s) successfully parsed: {}".format(len(benchmarkFileParseSuccess)))
   print("# of file(s) unsuccessfully parsed: {}".format(len(benchmarkFileParseFailures)))
   print("# of benchmarks: {}".format(len(benchmarkNames)))
+  print("# of benchmarks: {}".format(len(benchmarkNames)))
+  print("# of benchmarks skipped for further processing: {}".format(len(benchmarksSkipped)))
   print("")
   print("Verification Tasks")
   for (task, expectedResult) in verificationTaskMap.items():
