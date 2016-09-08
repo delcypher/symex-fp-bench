@@ -1,0 +1,48 @@
+architectures:
+  - x86_64
+categories:
+  - examples
+language: c99
+name: simple_branch
+schema_version: 0
+sources:
+  - main.c
+variants:
+  klee_no_bug:
+    defines:
+      KLEE: null
+    dependencies:
+      klee_runtime: {}
+    verification_tasks:
+      no_assert_fail:
+        correct: true
+  klee_bug:
+    defines:
+      KLEE: null
+      BUG: null
+    dependencies:
+      klee_runtime: {}
+    verification_tasks:
+      no_assert_fail:
+        correct: false
+        counter_examples:
+          -
+            description: 'An assert can fail when a is 0'
+            locations:
+              -
+                description: 'Failable assertion'
+                file: 'main.c'
+                line: 16
+  non_klee_no_bug:
+    verification_tasks:
+      no_assert_fail:
+        correct: true
+  non_klee_bug:
+    defines:
+      BUG: null
+    verification_tasks:
+      no_assert_fail:
+        correct: false
+comments: |
+  This benchmark checks that an unsigned 64-bit integer
+  correctly overflows.
