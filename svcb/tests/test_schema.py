@@ -239,6 +239,20 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateSimpleWithShortDefines(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'defines': {'N': '0', 'B2':'0'},
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateSimpleWithIncorrectDefines(self):
     s = {
       'architectures': ['x86_64'],
