@@ -36,6 +36,9 @@ macro(add_svcomp_benchmark BENCHMARK_DIR)
                     RESULT_VARIABLE RESULT_CODE
                    )
     if (NOT ${RESULT_CODE} EQUAL 0)
+      # Remove the generated output file because it is broken and if we don't
+      # the next time configure runs it will succeed.
+      file(REMOVE "${OUTPUT_FILE}")
       message(FATAL_ERROR "Failed to process benchmark ${BENCHMARK_DIR}. With error ${RESULT_CODE}")
     endif()
   endif()
