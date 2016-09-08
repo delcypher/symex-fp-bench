@@ -207,9 +207,9 @@ if (KLEE_NATIVE_RUNTIME_REQUIRED)
 endif()
 
 ###############################################################################
-# Add add_svcomp_benchmark() macro
+# Add add_benchmark() macro
 ###############################################################################
-include(cmake/add_svcomp_benchmark.cmake)
+include(cmake/add_benchmark.cmake)
 
 ###############################################################################
 # Runtime libraries

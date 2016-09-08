@@ -14,7 +14,7 @@ set(SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS
   "${SVCB_DIR}/tools/svcb-emit-cmake-decls.py"
 )
 
-macro(add_svcomp_benchmark BENCHMARK_DIR)
+macro(add_benchmark BENCHMARK_DIR)
   set(INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${BENCHMARK_DIR}/spec.yml)
   set(OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${BENCHMARK_DIR}_targets.cmake)
   # Only re-generate the file if necessary so that re-configure is as fast as possible
