@@ -77,7 +77,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(fooBenchmark.categories, ['xxx'])
     self.assertEqual(fooBenchmark.comments, 'global comment')
     self.assertEqual(fooBenchmark.defines, {'DUMMY':'1', 'FAIL':'0'})
-    # TODO: Check dependencies
+    self.assertEqual(fooBenchmark.dependencies, {'klee_runtime':{}, 'pthreads':{}})
     self.assertEqual(fooBenchmark.language, 'c99')
     self.assertEqual(fooBenchmark.name, 'basename_foo')
     self.assertEqual(fooBenchmark.sources, ['a.c', 'b.c'])
@@ -90,7 +90,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(barBenchmark.categories, ['xxx'])
     self.assertEqual(barBenchmark.comments, 'global comment')
     self.assertEqual(barBenchmark.defines, {'DUMMY':'1', 'FAIL':'1'})
-    # TODO: Check dependencies
+    self.assertEqual(barBenchmark.dependencies, {'klee_runtime':{}, 'openmp':{}})
     self.assertEqual(barBenchmark.language, 'c99')
     self.assertEqual(barBenchmark.name, 'basename_bar')
     self.assertEqual(barBenchmark.sources, ['a.c', 'b.c'])

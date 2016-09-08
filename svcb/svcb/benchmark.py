@@ -74,6 +74,9 @@ def getBenchmarks(benchSpec):
     globalDefines = {}
     if 'defines' in benchSpec:
       globalDefines.update(benchSpec['defines'])
+    globalDependencies = {}
+    if 'dependencies' in benchSpec:
+      globalDependencies.update(benchSpec['dependencies'])
     globalName = benchSpec['name']
     for variantName, variantProperties in benchSpec['variants'].items():
       # Make a copy to work with
@@ -81,12 +84,16 @@ def getBenchmarks(benchSpec):
       # Modify the copied benchmark specification so it looks
       # like a single benchmark
       benchmarkDefines = dict(globalDefines)
+      benchmarkDependencies = dict(globalDependencies)
       if 'defines' in variantProperties:
         benchmarkDefines.update(variantProperties['defines'])
+      if 'dependencies' in variantProperties:
+        benchmarkDependencies.update(variantProperties['dependencies'])
       benchmarkName = "{}_{}".format(globalName, variantName)
       del benchSpecCopy['variants']
       benchSpecCopy['defines'] = benchmarkDefines
       benchSpecCopy['name'] = benchmarkName
+      benchSpecCopy['dependencies'] = benchmarkDependencies
 
       if 'verification_tasks' in variantProperties:
         assert 'verification_tasks' not in benchSpecCopy
