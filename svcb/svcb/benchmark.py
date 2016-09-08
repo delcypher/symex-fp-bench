@@ -50,7 +50,7 @@ class Benchmark(object):
 
   @property
   def categories(self):
-    return self._data['categories']
+    return set(self._data['categories'])
 
   @property
   def comments(self):
@@ -77,6 +77,11 @@ def getBenchmarks(benchSpec):
     globalDependencies = {}
     if 'dependencies' in benchSpec:
       globalDependencies.update(benchSpec['dependencies'])
+    globalCategories = []
+    if 'categories' in benchSpec:
+      globalCategories = benchSpec['categories']
+      # Ensure the categories are always sorted so clients can rely on this behaviour
+      globalCategories.sort()
     globalName = benchSpec['name']
     for variantName, variantProperties in benchSpec['variants'].items():
       # Make a copy to work with
@@ -85,15 +90,23 @@ def getBenchmarks(benchSpec):
       # like a single benchmark
       benchmarkDefines = dict(globalDefines)
       benchmarkDependencies = dict(globalDependencies)
+      benchmarkCategories = list(globalCategories)
       if 'defines' in variantProperties:
         benchmarkDefines.update(variantProperties['defines'])
       if 'dependencies' in variantProperties:
         benchmarkDependencies.update(variantProperties['dependencies'])
+      if 'categories' in variantProperties:
+        benchmarkCategories.extend(variantProperties['categories'])
+        # Make categories unique and sorted.
+        benchmarkCategories = set(benchmarkCategories)
+        benchmarkCategories = list(benchmarkCategories)
+        benchmarkCategories.sort()
       benchmarkName = "{}_{}".format(globalName, variantName)
       del benchSpecCopy['variants']
       benchSpecCopy['defines'] = benchmarkDefines
       benchSpecCopy['name'] = benchmarkName
       benchSpecCopy['dependencies'] = benchmarkDependencies
+      benchSpecCopy['categories'] = benchmarkCategories
 
       if 'verification_tasks' in variantProperties:
         assert 'verification_tasks' not in benchSpecCopy

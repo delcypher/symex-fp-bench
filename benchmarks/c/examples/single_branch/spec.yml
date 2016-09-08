@@ -9,6 +9,8 @@ sources:
   - main.c
 variants:
   klee_no_bug:
+    categories:
+      - use_in_study
     defines:
       KLEE: null
     dependencies:
@@ -17,6 +19,8 @@ variants:
       no_assert_fail:
         correct: true
   klee_bug:
+    categories:
+      - use_in_study
     defines:
       KLEE: null
       BUG: null

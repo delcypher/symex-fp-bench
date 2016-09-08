@@ -34,7 +34,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(b.defines, {}) # Implicitly empty
     self.assertEqual(b.language, 'c99')
     self.assertEqual(b.comments, '') # Implicity empty
-    self.assertEqual(b.categories, ['xxx'])
+    self.assertEqual(b.categories, {'xxx'})
     self.assertEqual(b.verificationTasks, { 'no_assert_fail': {'correct': True} })
     self.assertTrue(b.isLanguageC())
     self.assertFalse(b.isLanguageCXX())
@@ -42,7 +42,7 @@ class TestBenchmark(unittest.TestCase):
   def testCreateTwoVariants(self):
     s = {
       'architectures': ['x86_64'],
-      'categories': ['xxx'],
+      'categories': ['xxx', 'cheese'],
       'comments': 'global comment',
       'defines': { 'DUMMY':'1' },
       'dependencies': { 'klee_runtime': {}},
@@ -54,11 +54,13 @@ class TestBenchmark(unittest.TestCase):
           'verification_tasks':{ 'no_assert_fail': {'correct': True} },
           'defines': {'FAIL':'0'},
           'dependencies': { 'pthreads': {} },
+          'categories': ['foo_category', 'cheese'],
         },
         'bar': {
           'verification_tasks':{ 'no_assert_fail': {'correct': False} },
           'defines': {'FAIL':'1'},
           'dependencies': { 'openmp': {} },
+          'categories': ['bar_category'],
         }
       }
     }
@@ -74,7 +76,7 @@ class TestBenchmark(unittest.TestCase):
 
     # Check foo
     self.assertEqual(fooBenchmark.architectures, ['x86_64'])
-    self.assertEqual(fooBenchmark.categories, ['xxx'])
+    self.assertEqual(fooBenchmark.categories, {'cheese','foo_category', 'xxx'})
     self.assertEqual(fooBenchmark.comments, 'global comment')
     self.assertEqual(fooBenchmark.defines, {'DUMMY':'1', 'FAIL':'0'})
     self.assertEqual(fooBenchmark.dependencies, {'klee_runtime':{}, 'pthreads':{}})
@@ -87,7 +89,7 @@ class TestBenchmark(unittest.TestCase):
 
     # Check bar
     self.assertEqual(barBenchmark.architectures, ['x86_64'])
-    self.assertEqual(barBenchmark.categories, ['xxx'])
+    self.assertEqual(barBenchmark.categories, {'bar_category', 'cheese', 'xxx'})
     self.assertEqual(barBenchmark.comments, 'global comment')
     self.assertEqual(barBenchmark.defines, {'DUMMY':'1', 'FAIL':'1'})
     self.assertEqual(barBenchmark.dependencies, {'klee_runtime':{}, 'openmp':{}})

@@ -12,6 +12,9 @@ __version__: 0
 type: object
 # Definitions contains common parts of the schema for reuse
 definitions:
+  categories: &categories
+    type: array
+    uniqueItems: true
   defines: &macro_defines
     type: object
     patternProperties:
@@ -145,9 +148,7 @@ properties:
         type: string
         enum:
           - any
-  categories:
-    type: array
-    uniqueItems: true
+  categories: *categories
   comments:
     # TODO: Is this flexible enough?
     type: string
@@ -212,6 +213,9 @@ properties:
         type: "object"
         additionalProperties: false
         properties:
+          # Additional categories of this variant. The categories of this variant
+          # are unioned with the global categories.
+          categories: *categories
           # The macro definitions provided here are unioned with the global
           # macro definitions. It is an error to have conflicting definitions.
           defines: *macro_defines
