@@ -13,7 +13,7 @@ int main() {
   if (a == 0) {
     printf("a is zero\n");
 #ifdef BUG
-    assert(false);
+    assert(0);
 #endif
   } else {
     printf("a is non-zero\n");

@@ -194,8 +194,17 @@ endforeach()
 ###############################################################################
 # Pthreads
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 find_package(Threads)
 find_package(OpenMP)
+find_package(KLEENativeRuntime)
+
+option(KLEE_NATIVE_RUNTIME_REQUIRED "Require the KLEE native runtime" ON)
+if (KLEE_NATIVE_RUNTIME_REQUIRED)
+	if (NOT KLEE_NATIVE_RUNTIME_FOUND)
+		message(FATAL_ERROR "KLEE native runtime is required.")
+	endif()
+endif()
 
 ###############################################################################
 # Add add_svcomp_benchmark() macro

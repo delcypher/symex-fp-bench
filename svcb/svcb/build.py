@@ -135,6 +135,13 @@ def generate_dependency_decls(benchmarkObj, targetName, enableTargetCMakeVariabl
         disabledTargetReasonsCMakeVariable,
         benchmarkObj
       )
+    elif depName == 'klee_runtime':
+      decl = generate_klee_runtime_dependency_code(
+        info,
+        targetName,
+        enableTargetCMakeVariable,
+        disabledTargetReasonsCMakeVariable
+      )
     else:
       msg = 'Unhandled benchmark dependency "{}"'.format(depName)
       _logger.error(msg)
@@ -177,3 +184,17 @@ endif()
     _logger.error("Unknown benchmark language")
     raise Exception("Unknown benchmark language")
   return (guardDecl, addDepDecl)
+
+def generate_klee_runtime_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
+  guardDecl = """
+if (NOT KLEE_NATIVE_RUNTIME_FOUND)
+{indent}set({enableTargetCMakeVariable} FALSE)
+{indent}list(APPEND {disabledTargetReasonsCMakeVariable} "KLEE runtime not available")
+endif()
+  \n""".format(enableTargetCMakeVariable=enableTargetCMakeVariable,
+      disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
+      indent=cmakeIndent)
+  addDepDecl = "{indent}target_include_directories({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_INCLUDE_DIR}})\n".format(indent=cmakeIndent, targetName=targetName)
+  addDepDecl += "{indent}target_link_libraries({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
+  return (guardDecl, addDepDecl)
+
