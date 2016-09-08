@@ -11,8 +11,8 @@ class Benchmark(object):
     self._data = data
     assert 'variants' not in self._data
     # TODO: Add all implicit empty fields
-    if 'comments' not in self._data:
-      self._data['comments'] = ""
+    if 'description' not in self._data:
+      self._data['description'] = ""
     if 'defines' not in self._data:
       self._data['defines'] = {}
     if 'dependencies' not in self._data:
@@ -53,8 +53,8 @@ class Benchmark(object):
     return set(self._data['categories'])
 
   @property
-  def comments(self):
-    return self._data['comments']
+  def description(self):
+    return self._data['description']
 
   @property
   def verificationTasks(self):

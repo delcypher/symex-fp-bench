@@ -149,8 +149,7 @@ properties:
         enum:
           - any
   categories: *categories
-  comments:
-    # TODO: Is this flexible enough?
+  description:
     type: string
   # These are compiler macro definitions used for the benchmark. If variants
   # are built they will all use these definitions in addition to any extra

@@ -43,7 +43,7 @@ class TestSchema(unittest.TestCase):
     s = {
       'architectures': ['x86_64'],
       'categories': [],
-      'comments': 'simple comment',
+      'description': 'simple comment',
       'language': 'c99',
       'name': 'foo',
       'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
@@ -550,18 +550,18 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
-  def testValidateInvalidComment(self):
+  def testValidateInvalidDescription(self):
     s = {
       'architectures': ['x86_64'],
       'categories': [],
-      'comments': ['comment1', 'comment2'],
+      'description': ['comment1', 'comment2'],
       'language': 'c99',
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': { 'no_assert_fail': {'correct': True} },
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"Failed validating 'type' in schema\['properties'\]\['comments'\]"
+    msgRegex= r"Failed validating 'type' in schema\['properties'\]\['description'\]"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):

@@ -27,5 +27,5 @@ variants:
               -
                 file: 'main.c'
                 line: 16
-comments: >
-  This benchmark illustrates using the SV-COMP functions.
+description: >
+  These benchmarks illustrate using the SV-COMP functions.

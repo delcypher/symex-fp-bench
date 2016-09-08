@@ -33,7 +33,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(b.architectures, ['x86_64'])
     self.assertEqual(b.defines, {}) # Implicitly empty
     self.assertEqual(b.language, 'c99')
-    self.assertEqual(b.comments, '') # Implicity empty
+    self.assertEqual(b.description, '') # Implicity empty
     self.assertEqual(b.categories, {'xxx'})
     self.assertEqual(b.verificationTasks, { 'no_assert_fail': {'correct': True} })
     self.assertTrue(b.isLanguageC())
@@ -43,7 +43,7 @@ class TestBenchmark(unittest.TestCase):
     s = {
       'architectures': ['x86_64'],
       'categories': ['xxx', 'cheese'],
-      'comments': 'global comment',
+      'description': 'global comment',
       'defines': { 'DUMMY':'1' },
       'dependencies': { 'klee_runtime': {}},
       'language': 'c99',
@@ -77,7 +77,7 @@ class TestBenchmark(unittest.TestCase):
     # Check foo
     self.assertEqual(fooBenchmark.architectures, ['x86_64'])
     self.assertEqual(fooBenchmark.categories, {'cheese','foo_category', 'xxx'})
-    self.assertEqual(fooBenchmark.comments, 'global comment')
+    self.assertEqual(fooBenchmark.description, 'global comment')
     self.assertEqual(fooBenchmark.defines, {'DUMMY':'1', 'FAIL':'0'})
     self.assertEqual(fooBenchmark.dependencies, {'klee_runtime':{}, 'pthreads':{}})
     self.assertEqual(fooBenchmark.language, 'c99')
@@ -90,7 +90,7 @@ class TestBenchmark(unittest.TestCase):
     # Check bar
     self.assertEqual(barBenchmark.architectures, ['x86_64'])
     self.assertEqual(barBenchmark.categories, {'bar_category', 'cheese', 'xxx'})
-    self.assertEqual(barBenchmark.comments, 'global comment')
+    self.assertEqual(barBenchmark.description, 'global comment')
     self.assertEqual(barBenchmark.defines, {'DUMMY':'1', 'FAIL':'1'})
     self.assertEqual(barBenchmark.dependencies, {'klee_runtime':{}, 'openmp':{}})
     self.assertEqual(barBenchmark.language, 'c99')

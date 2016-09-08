@@ -48,5 +48,5 @@ variants:
     verification_tasks:
       no_assert_fail:
         correct: false
-comments: >
-  This file demonstrates how declaring multiple variants works.
+description: >
+  These benchmarks are just simple examples
