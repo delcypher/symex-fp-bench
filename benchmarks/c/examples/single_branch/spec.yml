@@ -7,6 +7,7 @@ name: simple_branch
 schema_version: 0
 sources:
   - main.c
+# This declares four variants. Each variant is treated as a separate benchmark.
 variants:
   klee_no_bug:
     categories:
@@ -47,6 +48,5 @@ variants:
     verification_tasks:
       no_assert_fail:
         correct: false
-comments: |
-  This benchmark checks that an unsigned 64-bit integer
-  correctly overflows.
+comments: >
+  This file demonstrates how declaring multiple variants works.
