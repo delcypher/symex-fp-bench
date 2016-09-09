@@ -2,6 +2,7 @@ architectures:
   - x86_64
 categories:
   - examples
+  - do_not_use_in_study
 language: c99
 name: simple_branch
 schema_version: 0
@@ -11,8 +12,9 @@ sources:
 variants:
   # First variant
   klee_no_bug:
+    # This category is just here to demonstrate having variants belong to additional categories
     categories:
-      - use_in_study
+      - dummy_category
     defines:
       KLEE: null
     description: >
@@ -24,8 +26,6 @@ variants:
         correct: true
   # Second variant
   klee_bug:
-    categories:
-      - use_in_study
     defines:
       KLEE: null
       BUG: null

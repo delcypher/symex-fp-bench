@@ -2,6 +2,7 @@ architectures:
   - x86_64
 categories:
   - examples
+  - do_not_use_in_study
 dependencies:
   svcomp_klee_runtime: {}
 language: c99
