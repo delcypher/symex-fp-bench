@@ -4,6 +4,21 @@ import copy
 import pprint
 import re
 
+# This declares dictionary of verification tasks
+# that is merged into to the loaded verification
+# tasks of a `spec.yml` file. This serves to facilitate
+# verification properties being implicitly assumed to be
+# correct unless otherwise stated.
+# This should be kept consistent with `schema.yml`.
+DefaultVerificationTaskStatuses = {
+  "no_assert_fail": { "correct": True },
+  "no_reach_error_function": { "correct": True },
+  "no_invalid_free": { "correct": True },
+  "no_invalid_deref": { "correct": True },
+  "no_integer_division_by_zero": { "correct": True },
+  "no_overshift": { "correct": True},
+}
+
 class Benchmark(object):
   def __init__(self, data):
     assert isinstance(data, dict)
@@ -66,7 +81,13 @@ class Benchmark(object):
   def isLanguageCXX(self):
     return self.language.find('++') != -1
 
-def getBenchmarks(benchSpec):
+def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
+  # FIXME: addImplicitVerificationTasks should always be set to True by clients.
+  # It should only ever be set to False in unittests where we want to test
+  # without the implicit tasks being added.
+  #
+  # We should probably remove this option entirely and fix up the tests to
+  # prevent abuse.
   assert isinstance(benchSpec, dict)
   benchmarkObjs = []
   if 'variants' in benchSpec:
@@ -129,4 +150,13 @@ def getBenchmarks(benchSpec):
     # Make a copy to work with
     benchSpecCopy = copy.deepcopy(benchSpec)
     benchmarkObjs.append(Benchmark(benchSpecCopy))
+
+  # Add implicit verification_tasks
+  if addImplicitVerificationTasks:
+    for bObj in benchmarkObjs:
+      verificationTasks = bObj.getInternalRepr()['verification_tasks']
+      for (task, properties) in DefaultVerificationTaskStatuses.items():
+        if task not in verificationTasks:
+          verificationTasks[task] = copy.deepcopy(properties)
+
   return benchmarkObjs

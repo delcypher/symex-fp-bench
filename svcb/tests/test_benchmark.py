@@ -3,6 +3,7 @@
 import svcb
 from svcb import schema
 import svcb.benchmark
+import copy
 import unittest
 
 class TestBenchmark(unittest.TestCase):
@@ -24,7 +25,7 @@ class TestBenchmark(unittest.TestCase):
     self.appendSchemaVersion(s)
     # Validate benchmark specification
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
-    benchmarkObjs = svcb.benchmark.getBenchmarks(s)
+    benchmarkObjs = svcb.benchmark.getBenchmarks(s, addImplicitVerificationTasks=False)
     self.assertTrue(len(benchmarkObjs) == 1)
     # Test properties of the benchmark object
     b = benchmarkObjs[0]
@@ -68,7 +69,7 @@ class TestBenchmark(unittest.TestCase):
     self.appendSchemaVersion(s)
     # Validate benchmark specification
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
-    benchmarkObjs = svcb.benchmark.getBenchmarks(s)
+    benchmarkObjs = svcb.benchmark.getBenchmarks(s, addImplicitVerificationTasks=False)
     self.assertTrue(len(benchmarkObjs) == 2)
 
     # Extract the two benchmarks. The order is not defined so get based on name
@@ -101,4 +102,46 @@ class TestBenchmark(unittest.TestCase):
     self.assertTrue(barBenchmark.isLanguageC())
     self.assertFalse(barBenchmark.isLanguageCXX())
 
+  def testCreateSimpleWithImplicitVerficationTasks(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': ['xxx'],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': False} },
+    }
+    self.appendSchemaVersion(s)
+    # Validate benchmark specification
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+    benchmarkObjs = svcb.benchmark.getBenchmarks(s) # Default addImplicitVerificationTasks=True
+    self.assertTrue(len(benchmarkObjs) == 1)
+    # Test properties of the benchmark object
+    b = benchmarkObjs[0]
+    self.assertEqual(b.name, "foo")
+    self.assertEqual(b.sources, ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'])
+    self.assertEqual(b.architectures, ['x86_64'])
+    self.assertEqual(b.defines, {}) # Implicitly empty
+    self.assertEqual(b.language, 'c99')
+    self.assertEqual(b.description, '') # Implicity empty
+    self.assertEqual(b.categories, {'xxx'})
+    self.assertTrue(b.isLanguageC())
+    self.assertFalse(b.isLanguageCXX())
 
+    expectedTasks = copy.deepcopy(svcb.benchmark.DefaultVerificationTaskStatuses)
+    expectedTasks['no_assert_fail'] = { 'correct': False}
+    self.assertEqual(b.verificationTasks, expectedTasks)
+
+
+  def testSchemaVerificationTasksConsistent(self):
+    schemaVerificationTaskNames = set(self.persistentSchema['properties']['verification_tasks']['properties'].keys())
+    defaultVerificationTaskNames = set(svcb.benchmark.DefaultVerificationTaskStatuses.keys())
+    self.assertEqual(schemaVerificationTaskNames, defaultVerificationTaskNames)
+
+  def testDefaultVerificationTaskStatuses(self):
+    self.assertTrue(len(svcb.benchmark.DefaultVerificationTaskStatuses) > 0)
+    for (name, properties) in svcb.benchmark.DefaultVerificationTaskStatuses.items():
+      self.assertTrue(len(properties) == 1)
+      self.assertTrue(isinstance(properties, dict))
+      self.assertTrue('correct' in properties)
+      self.assertEqual(properties['correct'], True)

@@ -103,8 +103,10 @@ definitions:
       - correct
   verification_tasks: &verification_tasks
     type: object
-    minProperties: 1
+    minProperties: 0
     additionalProperties: false
+    # The semantics here is that if a property is not specified then the benchmark
+    # is implicitly assumed to be correct with respect to that property.
     properties:
       # It is not possible to reach an assertion in the program where the
       # assertion will fail.

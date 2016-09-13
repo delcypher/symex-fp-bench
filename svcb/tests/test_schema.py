@@ -469,11 +469,8 @@ class TestSchema(unittest.TestCase):
       'verification_tasks': {},
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"Failed validating 'minProperties' in schema\['properties'\]\['verification_tasks'\]"
-    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
-      schema.validateBenchmarkSpecification(s)
-    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
-      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
   def testValidateMissingVerificationTask(self):
     s = {
@@ -1231,3 +1228,4 @@ class TestSchema(unittest.TestCase):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
