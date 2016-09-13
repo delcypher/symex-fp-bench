@@ -735,7 +735,7 @@ class TestSchema(unittest.TestCase):
       'dependencies': { 'openmp': {'version':'3'} },
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"The '{'openmp'}' dependencies cannot be specified globally and for variant 'foo'"
+    msgRegex= r"The '\['openmp'\]' dependencies cannot be specified globally and for variant 'foo'"
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s)
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):

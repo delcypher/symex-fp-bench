@@ -145,9 +145,9 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
           if len(intersectionOfDependencies) > 0:
             raise BenchmarkSpecificationValidationError(
               "The '{}' dependencies cannot be specified globally and for variant '{}'".format(
-              intersectionOfDependencies,
+              sorted(list(intersectionOfDependencies)),
               variantName))
-    
+
   return
 
 def checkVerificationTasks(tasks):
