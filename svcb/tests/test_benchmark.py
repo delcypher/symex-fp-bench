@@ -72,8 +72,8 @@ class TestBenchmark(unittest.TestCase):
     self.assertTrue(len(benchmarkObjs) == 2)
 
     # Extract the two benchmarks. The order is not defined so get based on name
-    fooBenchmark = next(filter(lambda b: b.name == 'basename_foo', benchmarkObjs))
-    barBenchmark = next(filter(lambda b: b.name == 'basename_bar', benchmarkObjs))
+    fooBenchmark = list(filter(lambda b: b.name == 'basename_foo', benchmarkObjs))[0]
+    barBenchmark = list(filter(lambda b: b.name == 'basename_bar', benchmarkObjs))[0]
 
     # Check foo
     self.assertEqual(fooBenchmark.architectures, ['x86_64'])
