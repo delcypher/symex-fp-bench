@@ -235,6 +235,33 @@ add_custom_target(show-categories
                  )
 
 ###############################################################################
+# Show verification tasks
+###############################################################################
+add_custom_target(show-tasks
+                  COMMAND ${PYTHON_EXECUTABLE}
+                    "${SVCB_DIR}/tools/correctness-count.py"
+                    "--mode"
+                    "tasks"
+                    ${CMAKE_SOURCE_DIR}/benchmarks
+                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                  COMMENT "Showing verification tasks"
+                 )
+
+###############################################################################
+# Show benchmark correctness summary
+###############################################################################
+add_custom_target(show-correctness-summary
+                  COMMAND ${PYTHON_EXECUTABLE}
+                    "${SVCB_DIR}/tools/correctness-count.py"
+                    "--mode"
+                    "benchmark"
+                    ${CMAKE_SOURCE_DIR}/benchmarks
+                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                  COMMENT "Showing benchmark correctness summary"
+                 )
+
+
+###############################################################################
 # Benchmarks
 ###############################################################################
 add_subdirectory(benchmarks)

@@ -94,6 +94,18 @@ make check-svcb
 make show-categories
 ```
 
+## Displaying the number of verification tasks
+
+```
+make show-tasks
+```
+
+## Displaying a summary of benchmark correctness
+
+```
+make show-correctness-summary
+```
+
 ## Benchmark tools
 
 You can find various tools in `svcb/tools/`.
