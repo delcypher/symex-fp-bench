@@ -1,5 +1,7 @@
 # Floating Point correctness benchmark repository.
 
+Build Status: [![Build Status](https://travis-ci.org/delcypher/fp-bench.svg?branch=master)](https://travis-ci.org/delcypher/fp-bench)
+
 This repository contains a system for organising and building
 various benchmarks.
 
