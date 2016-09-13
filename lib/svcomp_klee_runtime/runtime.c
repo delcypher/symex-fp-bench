@@ -13,7 +13,7 @@
 #define SVCOMP_NONDET_DEFN_D(NAME,T) \
 T __VERIFIER_nondet_ ## NAME() { \
   T initialValue; \
-  klee_make_symbolic(&initialValue, sizeof(T), ""); \
+  klee_make_symbolic(&initialValue, sizeof(T), "unnamed"); \
   return initialValue; \
 }
 
