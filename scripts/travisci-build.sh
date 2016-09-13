@@ -1,5 +1,8 @@
 #!/bin/bash
 
+KLEE_SRC=${KLEE_SRC:-https://github.com/klee/klee/archive/v1.2.0.tar.gz}
+BUILD_DIR=${BUILD_DIR:-_build}
+
 # Exit if there is an error
 set -e
 
@@ -15,42 +18,32 @@ set -x
 
 ${C_COMPILER} -v --version
 
-: ${ARCH?ARCH must be set}
-case ${ARCH} in
-  x86_64)
-    mkdir build64
-    cd build64
-    EXTRA_C_FLAGS="-m64"
-    EXTRA_CXX_FLAGS="-m64"
-    ;;
-  i686)
-    mkdir build32
-    cd build32
-    EXTRA_C_FLAGS="-m32"
-    EXTRA_CXX_FLAGS="-m32"
-    ;;
-  *)
-    echo "Unknown architecture ${ARCH}"
-    exit 1
-    ;;
-esac
-: ${CONFIGURE_ONLY?CONFIGURE_ONLY must be set}
 if [ -n "${PYTHON_EXECUTABLE}" ]; then
   CMAKE_PYTHON_FLAG="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
 else
   CMAKE_PYTHON_FLAG=""
 fi
 
+mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
+
+# HACK:
+# We need a KLEE header file and runtime library. KLEE's build system is
+# stupidly fragile and complicated so just grab a release (for speed compared
+# to grabbing from git) and build it manually.
+wget ${KLEE_SRC} -O klee_src.tar.gz
+tar -xvf klee_src.tar.gz
+export KLEE_NATIVE_RUNTIME_INCLUDE_DIR="$(pwd)/klee-1.2.0/include"
+# Build the KLEE runtime
+${C_COMPILER} -I ${KLEE_NATIVE_RUNTIME_INCLUDE_DIR} -g -O2 -fpic -c $(pwd)/klee-1.2.0/runtime/Runtest/intrinsics.c -o runtest.o
+${CXX_COMPILER} -I ${KLEE_NATIVE_RUNTIME_INCLUDE_DIR} -g -O2 -fpic -c $(pwd)/klee-1.2.0/lib/Basic/KTest.cpp -o ktest.o
+${CXX_COMPILER} -shared runtest.o ktest.o -o $(pwd)/klee-1.2.0/runtime/Runtest/libkleeRuntest.so
+export KLEE_NATIVE_RUNTIME_LIB_DIR="$(pwd)/klee-1.2.0/runtime/Runtest"
+
 CC=${C_COMPILER} \
 CFLAGS="${EXTRA_C_FLAGS}" \
 CXX=${CXX_COMPILER} \
 CXXFLAGS="${EXTRA_CXX_FLAGS}" \
 cmake ${CMAKE_PYTHON_FLAG} ../
-if [ "x${CONFIGURE_ONLY}" = "x1" ]; then
-  make check-svcb
-else
-  make check-svcb
-  make -j2
-  make doc-doxygen
-  make show-categories
-fi
+make check-svcb
+make -j2
+make show-categories
