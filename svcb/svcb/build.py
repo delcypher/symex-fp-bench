@@ -70,13 +70,14 @@ endif()
       # FIXME: Need to put in absolute path
       for source in b.sources:
         declStr += "{indent}{indent}{source_file}\n".format(indent=cmakeIndent, source_file=os.path.join(sourceRootDir, source))
-      declStr += "  )\n"
-      # Emit linking info
-      #declStr += "{indent}target_link_libraries({target_name} PRIVATE {libs})\n".format(
-      #  indent=cmakeIndent,
-      #  target_name=targetName,
-      #  libs="svcomp_runtime")
-      # Emit custom macro defintions
+      # HACK: Emit svcomp_klee_runtime object files here if needed. We should use the `target_sources()` CMake
+      # command but only CMake >= 3.1 support this.
+      svcomp_klee_runtime_dependency = [ (name,info) for (name, info) in b.dependencies.items() if name == "svcomp_klee_runtime"]
+      assert(len(svcomp_klee_runtime_dependency) <= 1)
+      if len(svcomp_klee_runtime_dependency) == 1:
+        declStr += "{indent}{indent}$<TARGET_OBJECTS:svcomp_klee_runtime>\n".format(indent=cmakeIndent)
+      declStr += "{indent})\n".format(indent=cmakeIndent)
+
       if len(b.defines) > 0:
         declStr += "{indent}target_compile_definitions({target_name} PRIVATE\n".format(
           indent=cmakeIndent,
@@ -224,7 +225,7 @@ endif()
   addDepDecl = "{indent}target_link_libraries({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
   # svcomp_klee_runtime is an OBJECT library so we can't use `target_link_libraries`.
   # FIXME: We should use `target_sources()` here but that isn't available in CMake >= 3.1.
-  addDepDecl += "{indent}set_property(TARGET {targetName} APPEND PROPERTY SOURCES $<TARGET_OBJECTS:svcomp_klee_runtime>)\n".format(indent=cmakeIndent, targetName=targetName)
+  # HACK: We add `$<TARGET_OBJECTS:svcomp_klee_runtime>` elsewhere.
   return (guardDecl, addDepDecl)
 
 def generate_cmath_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
