@@ -52,3 +52,5 @@ cmake ${CMAKE_PYTHON_FLAG} ../
 make check-svcb
 make -j2
 make show-categories
+make show-tasks
+make show-correctness-summary
