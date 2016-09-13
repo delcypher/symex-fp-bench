@@ -20,6 +20,8 @@ echo "C Compiler:"
 ${C_COMPILER} -v --version
 echo "C++ Compiler:"
 ${CXX_COMPILER} -v --version
+echo "CMake"
+cmake --version
 
 if [ -n "${PYTHON_EXECUTABLE}" ]; then
   CMAKE_PYTHON_FLAG="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
