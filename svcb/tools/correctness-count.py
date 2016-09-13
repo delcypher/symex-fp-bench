@@ -26,6 +26,7 @@ def main(args):
                       type=str,
                       help="Directory to traverse")
   parser.add_argument("--categories", type=str, nargs='+', default=None, help='Only gather process benchmarks belonging to the specified categories')
+  parser.add_argument("--mode", choices=['tasks','benchmark'], default='tasks', help='Group by tasks or by benchmark')
   pargs = parser.parse_args(args)
   logLevel = getattr(logging, pargs.log_level.upper(),None)
   logging.basicConfig(level=logLevel)
@@ -41,6 +42,17 @@ def main(args):
   benchmarkNames = set()
   benchmarksSkipped = set()
   verificationTaskMap = { }
+
+  # Prepare verificationTaskMap
+  if pargs.mode == 'tasks':
+    # FIXME: Refactor to do preparation here
+    pass
+  elif pargs.mode == 'benchmark':
+    verificationTaskMap[True] = set() # All correct
+    verificationTaskMap[False] = set() # At least one incorrect task
+    verificationTaskMap[None] = set() # All tasks are unknown
+  else:
+    raise Exception('Unreachable')
 
   onlyProcessCategories = set(pargs.categories) if pargs.categories != None else set()
 
@@ -77,12 +89,17 @@ def main(args):
               benchmarksSkipped.add(benchmarkObj)
               continue
 
-
           # Verification tasks
-          for (task, taskProperties) in benchmarkObj.verificationTasks.items():
-            if task not in verificationTaskMap:
-              verificationTaskMap[task] = { True: [], False: [], None: [] }
-            verificationTaskMap[task][taskProperties['correct']].append(benchmarkObj)
+          if pargs.mode == 'tasks':
+            for (task, taskProperties) in benchmarkObj.verificationTasks.items():
+                if task not in verificationTaskMap:
+                  verificationTaskMap[task] = { True: [], False: [], None: [] }
+                verificationTaskMap[task][taskProperties['correct']].append(benchmarkObj)
+          elif pargs.mode == 'benchmark':
+            group = determineGroup(benchmarkObj)
+            verificationTaskMap[group].add(benchmarkObj)
+          else:
+            raise Exception('Unreachable')
 
   # Show statistics
   print("")
@@ -92,14 +109,56 @@ def main(args):
   print("# of benchmarks: {}".format(len(benchmarkNames)))
   print("# of benchmarks skipped for further processing: {}".format(len(benchmarksSkipped)))
   print("")
-  print("Verification Tasks")
-  for (task, expectedResult) in verificationTaskMap.items():
-    print("Task {}:".format(task))
-    print("# of tasks expected to be correct: {}".format(len(expectedResult[True])))
-    print("# of tasks expected to be incorrect: {}".format(len(expectedResult[False])))
-    print("# of tasks with unknown correctness: {}".format(len(expectedResult[None])))
+  if pargs.mode == 'tasks':
+    print("Verification Tasks")
+    for (task, expectedResult) in verificationTaskMap.items():
+      print("Task {}:".format(task))
+      print("# of tasks expected to be correct: {}".format(len(expectedResult[True])))
+      print("# of tasks expected to be incorrect: {}".format(len(expectedResult[False])))
+      print("# of tasks with unknown correctness: {}".format(len(expectedResult[None])))
+      print("")
+  elif pargs.mode == 'benchmark':
+    print("Grouped by benchmark")
+    print("# of benchmarks that expect all tasks to be correct: {}".format(len(verificationTaskMap[True])))
+    print("# of benchmarks that expect at least one task to be incorrect: {}".format(len(verificationTaskMap[False])))
+    print("# of benchmarks that expect all tasks to be unknown: {}".format(len(verificationTaskMap[None])))
     print("")
+  else:
+    raise Exception('Unreachable')
   return 0
+
+
+def determineGroup(benchmarkObj):
+  """
+    Returns True if benchmark expects all verification tasks to be correct
+    Returns False if benchmark expects at least one verification task to be incorrect
+    Return None if benchmarks expect all tasks to be unknown.
+  """
+  foundAllCorrect=True
+  foundAllUnknown=True
+  foundIncorrect=False
+  for (taskName, properties) in benchmarkObj.verificationTasks.items():
+    correct = properties['correct']
+    if correct == False:
+      foundIncorrect = True
+      foundAllCorrect = False
+      foundAllUnknown = False
+      break
+    elif correct == None:
+      foundAllCorrect = False
+    elif correct == True:
+      foundAllUnknown = False
+
+  if foundAllCorrect:
+    return True
+  
+  if foundIncorrect:
+    return False
+
+  assert foundAllUnknown
+  return None
+
+
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv[1:]))
