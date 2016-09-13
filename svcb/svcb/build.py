@@ -223,7 +223,8 @@ endif()
       indent=cmakeIndent)
   addDepDecl = "{indent}target_link_libraries({targetName} PRIVATE ${{KLEE_NATIVE_RUNTIME_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
   # svcomp_klee_runtime is an OBJECT library so we can't use `target_link_libraries`.
-  addDepDecl += "{indent}target_sources({targetName} PRIVATE $<TARGET_OBJECTS:svcomp_klee_runtime>)\n".format(indent=cmakeIndent, targetName=targetName)
+  # FIXME: We should use `target_sources()` here but that isn't available in CMake >= 3.1.
+  addDepDecl += "{indent}set_property(TARGET {targetName} APPEND PROPERTY SOURCES $<TARGET_OBJECTS:svcomp_klee_runtime>)\n".format(indent=cmakeIndent, targetName=targetName)
   return (guardDecl, addDepDecl)
 
 def generate_cmath_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
