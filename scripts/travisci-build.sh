@@ -16,7 +16,10 @@ set -x
   # TravisCI overrides the ``CXX`` variable
 : ${CXX_COMPILER?CXX_COMPILER must be set}
 
+echo "C Compiler:"
 ${C_COMPILER} -v --version
+echo "C++ Compiler:"
+${CXX_COMPILER} -v --version
 
 if [ -n "${PYTHON_EXECUTABLE}" ]; then
   CMAKE_PYTHON_FLAG="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
