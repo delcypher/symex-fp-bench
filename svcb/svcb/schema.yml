@@ -39,11 +39,11 @@ definitions:
     additionalProperties: false
     properties:
     # Possible dependencies
-      svcomp_klee_runtime: *dependency_properties
-      klee_runtime: *dependency_properties
-      pthreads: *dependency_properties
-      openmp: *dependency_properties
       cmath: *dependency_properties
+      klee_runtime: *dependency_properties
+      openmp: *dependency_properties
+      pthreads: *dependency_properties
+      svcomp_klee_runtime: *dependency_properties
   verification_task_properties: &verification_task_properties
     type: object
     properties:
