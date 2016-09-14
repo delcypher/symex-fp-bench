@@ -48,9 +48,10 @@ def main(args):
     # FIXME: Refactor to do preparation here
     pass
   elif pargs.mode == 'benchmark':
-    verificationTaskMap[True] = set() # All correct
-    verificationTaskMap[False] = set() # At least one incorrect task
-    verificationTaskMap[None] = set() # All tasks are unknown
+    verificationTaskMap[0] = set() # All correct
+    verificationTaskMap[1] = set() # At least one incorrect task
+    verificationTaskMap[2] = set() # Mixture of correct and unknown verification tasks.
+    verificationTaskMap[3] = set() # All tasks are unknown
   else:
     raise Exception('Unreachable')
 
@@ -119,9 +120,10 @@ def main(args):
       print("")
   elif pargs.mode == 'benchmark':
     print("Grouped by benchmark")
-    print("# of benchmarks that expect all tasks to be correct: {}".format(len(verificationTaskMap[True])))
-    print("# of benchmarks that expect at least one task to be incorrect: {}".format(len(verificationTaskMap[False])))
-    print("# of benchmarks that expect all tasks to be unknown: {}".format(len(verificationTaskMap[None])))
+    print("# of benchmarks that expect all tasks to be correct: {}".format(len(verificationTaskMap[0])))
+    print("# of benchmarks that expect at least one task to be incorrect: {}".format(len(verificationTaskMap[1])))
+    print("# of benchmarks that expect tasks to be a mixture of correct and unknown: {}".format(len(verificationTaskMap[2])))
+    print("# of benchmarks that expect all tasks to be unknown: {}".format(len(verificationTaskMap[3])))
     print("")
   else:
     raise Exception('Unreachable')
@@ -130,34 +132,47 @@ def main(args):
 
 def determineGroup(benchmarkObj):
   """
-    Returns True if benchmark expects all verification tasks to be correct
-    Returns False if benchmark expects at least one verification task to be incorrect
-    Return None if benchmarks expect all tasks to be unknown.
+    Returns 0 if benchmark expects all verification tasks to be correct.
+    Returns 1 if benchmark expects at least one verification task to be incorrect.
+    Returns 2 if benchmark expects a mixture of correct and unknown verification tasks.
+    Return  3 if benchmarks expect all tasks to be unknown.
   """
-  foundAllCorrect=True
-  foundAllUnknown=True
-  foundIncorrect=False
+  foundAllCorrect=True # Assume to be true until we discover to be false
+  foundAllUnknown=True # Assume to be true until we discover to be false
+  foundIncorrect=False # Assume to be false until we discover to be true
+  foundMixedCorrectAndUnknown=True # Assume to be true until we discover to be false
+  correctCount = 0
   for (taskName, properties) in benchmarkObj.verificationTasks.items():
     correct = properties['correct']
     if correct == False:
       foundIncorrect = True
       foundAllCorrect = False
       foundAllUnknown = False
+      foundMixedCorrectAndUnknown = False
       break
     elif correct == None:
       foundAllCorrect = False
     elif correct == True:
+      correctCount += 1
       foundAllUnknown = False
 
+  if (correctCount == 0 and foundMixedCorrectAndUnknown) or foundAllUnknown:
+    # We need to have seen at least one verification task expected to be
+    # correct.
+    foundMixedCorrectAndUnknown = False
+
   if foundAllCorrect:
-    return True
-  
+    return 0
+
   if foundIncorrect:
-    return False
+    return 1
+
+  if foundMixedCorrectAndUnknown:
+    assert not foundAllUnknown
+    return 2
 
   assert foundAllUnknown
-  return None
-
+  return 3
 
 
 if __name__ == '__main__':
