@@ -6,14 +6,19 @@
 // runtime functions that calls into KLEE's runtime functions.
 #include "svcomp/svcomp.h"
 #include "klee/klee.h"
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define SVCOMP_NONDET_DEFN_D(NAME,T) \
 T __VERIFIER_nondet_ ## NAME() { \
+  static uint64_t counter = 0; \
+  char name[] = "symbolic_xxxxxxxxxxxxxxxxxxxx_TTTTTTTT"; \
+  char* offsetStr = name + 9; \
+  sprintf(offsetStr, "%" PRIu64 "_%s", counter, #T); \
   T initialValue; \
-  klee_make_symbolic(&initialValue, sizeof(T), "unnamed"); \
+  klee_make_symbolic(&initialValue, sizeof(T), name); \
   return initialValue; \
 }
 
