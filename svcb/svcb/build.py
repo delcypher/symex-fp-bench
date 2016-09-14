@@ -157,6 +157,13 @@ def generate_dependency_decls(benchmarkObj, targetName, enableTargetCMakeVariabl
         enableTargetCMakeVariable,
         disabledTargetReasonsCMakeVariable
       )
+    elif depName == 'gsl':
+      decl = generate_gsl_dependency_code(
+        info,
+        targetName,
+        enableTargetCMakeVariable,
+        disabledTargetReasonsCMakeVariable
+      )
     else:
       msg = 'Unhandled benchmark dependency "{}"'.format(depName)
       _logger.error(msg)
@@ -237,3 +244,16 @@ def generate_cmath_dependency_code(info, targetName, enableTargetCMakeVariable, 
 
   return ("", addDepDecl)
 
+def generate_gsl_dependency_code(info, targetName, enableTargetCMakeVariable, disabledTargetReasonsCMakeVariable):
+  # FIXME: Rename GSL to clearer name once benchmarks are public
+  guardDecl = """
+if (NOT GSL_AVAILABLE)
+{indent}set({enableTargetCMakeVariable} FALSE)
+{indent}list(APPEND {disabledTargetReasonsCMakeVariable} "GSL not available")
+endif()
+  \n""".format(enableTargetCMakeVariable=enableTargetCMakeVariable,
+      disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
+      indent=cmakeIndent)
+  addDepDecl = "{indent}target_include_directories({targetName} PRIVATE ${{GSL_INCLUDE_DIR}})\n".format(indent=cmakeIndent, targetName=targetName)
+  addDepDecl += "{indent}target_link_libraries({targetName} PRIVATE ${{GSL_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
+  return (guardDecl, addDepDecl)
