@@ -255,5 +255,5 @@ endif()
       disabledTargetReasonsCMakeVariable=disabledTargetReasonsCMakeVariable,
       indent=cmakeIndent)
   addDepDecl = "{indent}target_include_directories({targetName} PRIVATE ${{GSL_INCLUDE_DIR}})\n".format(indent=cmakeIndent, targetName=targetName)
-  addDepDecl += "{indent}target_link_libraries({targetName} PRIVATE ${{GSL_LIB}})\n".format(indent=cmakeIndent, targetName=targetName)
+  addDepDecl += "{indent}target_link_libraries({targetName} PRIVATE ${{GSL_LIBS}})\n".format(indent=cmakeIndent, targetName=targetName)
   return (guardDecl, addDepDecl)
