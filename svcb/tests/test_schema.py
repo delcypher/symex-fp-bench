@@ -1229,3 +1229,16 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateSimpleCorrect(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)

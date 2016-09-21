@@ -181,6 +181,11 @@ properties:
       - gnu++11
       - gnu++14
   dependencies: *dependencies
+  misc:
+    # This exists to allow an arbitary dictionary to exist that has no schema.
+    # This can be used by verification tools to store extra data for a benchmark
+    # they find useful that while still conforming to this schema.
+    type: object
   name:
     type: string
     pattern: "^[a-zA-Z0-9_.-]+$"

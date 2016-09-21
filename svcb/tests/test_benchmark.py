@@ -39,6 +39,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(b.verificationTasks, { 'no_assert_fail': {'correct': True} })
     self.assertTrue(b.isLanguageC())
     self.assertFalse(b.isLanguageCXX())
+    self.assertEqual(b.misc, {}) # Implicitly empty
 
   def testCreateTwoVariants(self):
     s = {
@@ -50,6 +51,7 @@ class TestBenchmark(unittest.TestCase):
       'language': 'c99',
       'name': 'basename',
       'sources': ['a.c', 'b.c'],
+      'misc': { 'dummy': 1},
       'variants': {
         'foo': {
           'verification_tasks':{ 'no_assert_fail': {'correct': True} },
@@ -88,6 +90,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(fooBenchmark.verificationTasks,{ 'no_assert_fail': {'correct': True} })
     self.assertTrue(fooBenchmark.isLanguageC())
     self.assertFalse(fooBenchmark.isLanguageCXX())
+    self.assertEqual(fooBenchmark.misc, {'dummy':1})
 
     # Check bar
     self.assertEqual(barBenchmark.architectures, ['x86_64'])
@@ -101,6 +104,7 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(barBenchmark.verificationTasks,{ 'no_assert_fail': {'correct': False} })
     self.assertTrue(barBenchmark.isLanguageC())
     self.assertFalse(barBenchmark.isLanguageCXX())
+    self.assertEqual(barBenchmark.misc, {'dummy':1})
 
   def testCreateSimpleWithImplicitVerficationTasks(self):
     s = {

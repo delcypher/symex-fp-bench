@@ -32,6 +32,8 @@ class Benchmark(object):
       self._data['defines'] = {}
     if 'dependencies' not in self._data:
       self._data['dependencies'] = {}
+    if 'misc' not in self._data:
+      self._data['misc'] = {}
 
   def __str__(self):
     return pprint.pformat(self._data)
@@ -80,6 +82,10 @@ class Benchmark(object):
 
   def isLanguageCXX(self):
     return self.language.find('++') != -1
+
+  @property
+  def misc(self):
+    return self._data['misc']
 
 def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
   # FIXME: addImplicitVerificationTasks should always be set to True by clients.
