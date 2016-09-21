@@ -12,6 +12,7 @@ set(SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS
   "${SVCB_DIR}/svcb/schema.yml"
   "${SVCB_DIR}/svcb/util.py"
   "${SVCB_DIR}/tools/svcb-emit-cmake-decls.py"
+  "${SVCB_DIR}/tools/svcb-emit-cmake-augmented-spec.py"
 )
 
 macro(add_benchmark BENCHMARK_DIR)
@@ -58,7 +59,24 @@ macro(add_benchmark BENCHMARK_DIR)
         ${ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG}
       )
     endif()
+
+    if (EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES)
+      if (WLLVM_RUN_EXTRACT_BC)
+        set(_extract_bc_arg "--llvm-bc-path" "$<TARGET_FILE:${benchmark_target}>.bc")
+      endif()
+      add_custom_command(TARGET ${benchmark_target}
+        POST_BUILD
+        COMMAND "${PYTHON_EXECUTABLE}" "${SVCB_DIR}/tools/svcb-emit-cmake-augmented-spec.py"
+          "${INPUT_FILE}"
+          "${benchmark_target}"
+          "-o" "$<TARGET_FILE:${benchmark_target}>.yml"
+          "--exe-path" "$<TARGET_FILE:${benchmark_target}>"
+          ${_extract_bc_arg}
+        COMMENT "Generating augmented benchmark specification file for ${benchmark_target}"
+      )
+    endif()
   endforeach()
+  unset(_extract_bc_arg)
 
   # Let CMake know that configuration depends on the benchmark specification file
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${INPUT_FILE}")

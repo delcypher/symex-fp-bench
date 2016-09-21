@@ -228,6 +228,13 @@ if ( ${CMAKE_C_COMPILER} MATCHES "wllvm$")
 endif()
 
 ###############################################################################
+# This option will cause a corresponding YAML file to be emitted for every
+# benchmark that contains the information from the original `spec.yml` file
+# augmented with the location of the built executable and other information.
+###############################################################################
+option(EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES "Emit Augmented Benchmark specification files" ON)
+
+###############################################################################
 # Add add_benchmark() macro
 ###############################################################################
 include(cmake/add_benchmark.cmake)
