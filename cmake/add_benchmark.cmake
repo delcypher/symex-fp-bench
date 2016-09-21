@@ -46,6 +46,20 @@ macro(add_benchmark BENCHMARK_DIR)
   endif()
   # Include the generated file
   include(${OUTPUT_FILE})
+
+  # Iterate over the declared targets and perform any necessary action
+  foreach (benchmark_target ${_benchmark_targets})
+    if (WLLVM_RUN_EXTRACT_BC)
+      add_custom_command(TARGET ${benchmark_target}
+        POST_BUILD
+        COMMAND ${WLLVM_EXTRACT_BC_TOOL} "$<TARGET_FILE:${benchmark_target}>" -o "$<TARGET_FILE:${benchmark_target}>.bc"
+        # FIXME: BYPRODUCTS can't take a generator expression so the clean target won't delete the LLVM bitcode files.
+        COMMENT "Running ${WLLVM_EXTRACT_BC_TOOL} on ${benchmark_target}"
+        ${ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG}
+      )
+    endif()
+  endforeach()
+
   # Let CMake know that configuration depends on the benchmark specification file
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${INPUT_FILE}")
   foreach (dep ${SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS})
