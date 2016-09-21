@@ -80,7 +80,11 @@ $ CC=wllvm CXX=wllvm++ KLEE_NATIVE_RUNTIME_LIB_DIR=<KLEE_RUNTIME_LIB_DIR> KLEE_N
 $ make
 ```
 
-then you would run the `extract-bc` tool that comes with Whole Program LLVM to get the bitcode file that corresponds to the native binary.
+If the `WLLVM_RUN_EXTRACT_BC` CMake option is set to `TRUE` and CMake detects that wllvm is being used as the compiler then
+it will automatically run the `extract-bc` tool on each binary and will output the LLVM bitcode in the same directory as the binary
+with a `.bc` suffix. Note `extract-bc` must be in your `PATH`.
+
+If the `WLLVM_RUN_EXTRACT_BC` CMake option is set to `FALSE` you will need to run the `extract-bc` tool manually.
 
 ## Running schema tests
 

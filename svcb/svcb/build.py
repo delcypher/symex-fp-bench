@@ -101,6 +101,18 @@ endif()
       for (_, depAddDecl) in dependencyHandlingCMakeDecls:
         declStr += depAddDecl
 
+      # Emit wllvm build rule
+      declStr += """
+{indent}if (WLLVM_RUN_EXTRACT_BC)
+{indent}{indent}add_custom_command(TARGET {target}
+{indent}{indent}{indent}POST_BUILD
+{indent}{indent}{indent}COMMAND ${{WLLVM_EXTRACT_BC_TOOL}} "$<TARGET_FILE:{target}>" -o "$<TARGET_FILE:{target}>.bc"
+{indent}{indent}{indent}COMMENT "Running ${{WLLVM_EXTRACT_BC_TOOL}} on {target}"
+{indent}{indent}{indent}${{ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG}}
+{indent}{indent})
+{indent}endif()
+""".format(indent=cmakeIndent, target=targetName)
+
       # Close guard
       declStr += """
 else()

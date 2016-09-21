@@ -205,6 +205,29 @@ find_library(C_MATH_LIBRARY
 )
 
 ###############################################################################
+# Detect if building with wllvm
+###############################################################################
+if ( ${CMAKE_C_COMPILER} MATCHES "wllvm$")
+  message(STATUS "C compiler is wllvm")
+  if ( NOT ${CMAKE_CXX_COMPILER} MATCHES "wllvm\\+\\+$")
+    message(FATAL_ERROR "CXX compiler but be wllvm++")
+  endif()
+  option(WLLVM_RUN_EXTRACT_BC "Automatically run extract-bc on benchmarks when building with wllvm" ON)
+  if (WLLVM_RUN_EXTRACT_BC)
+    # Find extract-bc
+    find_program(WLLVM_EXTRACT_BC_TOOL
+      NAMES extract-bc
+      DOC "Path to extract-bc tool shipped with wllvm"
+    )
+    if (NOT WLLVM_EXTRACT_BC_TOOL)
+      message(FATAL_ERROR "Could not find extract-bc tool that should be shipped with wllvm. Please add it to your path")
+    else()
+      message(STATUS "Found extract-bc tool: ${WLLVM_EXTRACT_BC_TOOL}")
+    endif()
+  endif()
+endif()
+
+###############################################################################
 # Add add_benchmark() macro
 ###############################################################################
 include(cmake/add_benchmark.cmake)
