@@ -2,6 +2,8 @@
 
 KLEE_SRC=${KLEE_SRC:-https://github.com/klee/klee/archive/v1.2.0.tar.gz}
 BUILD_DIR=${BUILD_DIR:-_build}
+WLLVM_SHA1=b61dd0fd1b9170cef84622e270d72909cd817d1f
+WLLVM_GIT_URL=https://github.com/travitch/whole-program-llvm.git
 
 # Exit if there is an error
 set -e
@@ -15,6 +17,17 @@ set -x
   # Note we use ``CXX_COMPILER`` rather than ``CXX`` because
   # TravisCI overrides the ``CXX`` variable
 : ${CXX_COMPILER?CXX_COMPILER must be set}
+
+if [ "${C_COMPILER}" == "wllvm" ]; then
+  echo "Using wllvm"
+  if [ "${CXX_COMPILER}" != "wllvm++" ]; then
+    echo "CXX_COMPILER must be wllvm++ if C_COMPILER is wllvm"
+    exit 1
+  fi
+  git clone ${WLLVM_GIT_URL} wllvm_git && cd wllvm_git && git checkout ${WLLVM_SHA1} && cd ../
+  export PATH=`pwd`/wllvm_git:$PATH
+  export LLVM_COMPILER=clang
+fi
 
 echo "C Compiler:"
 ${C_COMPILER} -v --version
@@ -54,3 +67,5 @@ make -j2
 make show-categories
 make show-tasks
 make show-correctness-summary
+
+# TODO: If wllvm build check the bitcode files exist and can be read.
