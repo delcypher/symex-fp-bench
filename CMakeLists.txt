@@ -187,8 +187,10 @@ endforeach()
 # Pthreads
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
-find_package(Threads)
-find_package(OpenMP)
+# HACK: We don't need OpenMP or pthreads for now so pretend we don't have
+# them to speed up configure.
+#find_package(Threads)
+#find_package(OpenMP)
 find_package(KLEENativeRuntime)
 
 option(KLEE_NATIVE_RUNTIME_REQUIRED "Require the KLEE native runtime" ON)
