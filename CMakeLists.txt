@@ -230,6 +230,19 @@ if ( ${CMAKE_C_COMPILER} MATCHES "wllvm$")
 endif()
 
 ###############################################################################
+# Number of jobs to be used when building external projects
+###############################################################################
+include(ProcessorCount)
+ProcessorCount(SVCB_NUMBER_OF_HOST_PROCESSORS)
+message(STATUS "Host has ${SVCB_NUMBER_OF_HOST_PROCESSORS} CPU(s)")
+set(EXTERNAL_PROJECT_JOBS
+  "${SVCB_NUMBER_OF_HOST_PROCESSORS}"
+  CACHE
+  STRING
+  "When building an external project if supported build with this many jobs"
+)
+
+###############################################################################
 # This option will cause a corresponding YAML file to be emitted for every
 # benchmark that contains the information from the original `spec.yml` file
 # augmented with the location of the built executable and other information.
