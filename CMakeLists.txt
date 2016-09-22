@@ -4,7 +4,7 @@
 # This overrides the default flags for the different CMAKE_BUILD_TYPEs
 set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/c_flags_override.cmake")
 project(SVCOMP_C_BENCHMARKS C CXX)
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0.2)
 
 ################################################################################
 # Set the root of SVCB infrastructure

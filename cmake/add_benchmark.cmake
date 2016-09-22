@@ -78,6 +78,10 @@ macro(add_benchmark BENCHMARK_DIR)
   endforeach()
   unset(_extract_bc_arg)
 
+  if ("${CMAKE_VERSION}" VERSION_LESS "3.0")
+    message(FATAL_ERROR "Need CMake >= 3.0 to support CMAKE_CONFIGURE_DEPENDS property on directories")
+  endif()
+
   # Let CMake know that configuration depends on the benchmark specification file
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${INPUT_FILE}")
   foreach (dep ${SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS})
