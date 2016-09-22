@@ -45,6 +45,15 @@ Before building the benchmarks you will need the following installed:
 * [Python](https://www.python.org/) >= 2.7
 * [jsonschema](https://pypi.python.org/pypi/jsonschema) and [pyyaml](https://pypi.python.org/pypi/PyYAML) Python modules
 
+Note we provide a `requirements.txt` file for the Python dependencies so you can install these via `pip`.
+
+```
+pip install -r requirements.txt
+```
+
+If you don't want to install these dependencies globally create a Python virtual environment
+by using [virtualenv](https://virtualenv.pypa.io/en/stable/).
+
 ## Building benchmarks as native binaries
 
 Here are the basic steps for building the benchmarks.
