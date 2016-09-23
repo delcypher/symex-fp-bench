@@ -15,7 +15,7 @@ endif()
 if (("${CMAKE_${_lang}_COMPILER_ID}" MATCHES "Clang") OR ("${CMAKE_${_lang}_COMPILER_ID}" MATCHES "GNU"))
   # Taken from Modules/Compiler/GNU.cmake but -DNDEBUG is removed
   set(CMAKE_${_lang}_FLAGS_INIT "")
-  set(CMAKE_${_lang}_FLAGS_DEBUG_INIT "-g")
+  set(CMAKE_${_lang}_FLAGS_DEBUG_INIT "-O0 -g")
   set(CMAKE_${_lang}_FLAGS_MINSIZEREL_INIT "-Os")
   set(CMAKE_${_lang}_FLAGS_RELEASE_INIT "-O3")
   set(CMAKE_${_lang}_FLAGS_RELWITHDEBINFO_INIT "-O2 -g")
