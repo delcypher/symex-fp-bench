@@ -22,6 +22,10 @@ def main(args):
   parser.add_argument("-l","--log-level",type=str, default="info",
                       dest="log_level",
                       choices=['debug','info','warning','error'])
+  parser.add_argument("--show-benchmark-names",
+                      action='store_true',
+                      default=False,
+                      dest='show_benchmark_names')
   parser.add_argument("directory",
                       type=str,
                       help="Directory to traverse")
@@ -39,7 +43,7 @@ def main(args):
   benchmarkFileParseFailures = set()
   categoryToBenchmarkNames = {}
   uncategorisedBenchmarks = set()
-  benchmarkNames = set()
+  benchmarkToFileMap = dict()
 
   # Traverse directory
   for dirpath, dirnames, filenames in os.walk(pargs.directory):
@@ -66,8 +70,8 @@ def main(args):
         benchmarkObjs = svcb.benchmark.getBenchmarks(benchSpec)
         assert len(benchmarkObjs) > 0
         for benchmarkObj in benchmarkObjs:
-          assert benchmarkObj.name not in benchmarkNames
-          benchmarkNames.add(benchmarkObj.name)
+          assert benchmarkObj.name not in benchmarkToFileMap
+          benchmarkToFileMap[benchmarkObj.name] = fullFileName
           if len(benchmarkObj.categories) == 0:
             uncategorisedBenchmarks.add(benchmarkObj.name)
             continue
@@ -81,13 +85,18 @@ def main(args):
   print("")
   print("# of file(s) successfully parsed: {}".format(len(benchmarkFileParseSuccess)))
   print("# of file(s) unsuccessfully parsed: {}".format(len(benchmarkFileParseFailures)))
-  print("# of benchmarks: {}".format(len(benchmarkNames)))
+  print("# of benchmarks: {}".format(len(benchmarkToFileMap.keys())))
   print("# of uncategorised benchmarks: {}".format(len(uncategorisedBenchmarks)))
   print("")
   print("=== Categories ===")
   # Show categories with counts, sorted by category name
   for categoryName, benchmarkNames in sorted(categoryToBenchmarkNames.items(),key = lambda pair: pair[0]):
     print("{category}: {count}".format(category=categoryName, count=len(benchmarkNames)))
+    if pargs.show_benchmark_names:
+      for benchmarkName in sorted(benchmarkNames):
+        fileName = benchmarkToFileMap[benchmarkName]
+        print("{} (declared in \"{}\")".format(benchmarkName, fileName))
+      print("="*80)
 
   return 0
 
