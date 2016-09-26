@@ -87,10 +87,13 @@ def main(args):
 
   # Augment the benchmark with additional data
   if pArgs.exe_path:
-    benchmarkObj.getInternalRepr()['misc']['exe_path'] = pArgs.exe_path
+    benchmarkObj.getInternalRepr()['misc']['exe_path'] = os.path.basename(pArgs.exe_path)
 
   if pArgs.llvm_bc_path:
-    benchmarkObj.getInternalRepr()['misc']['llvm_bc_path'] = pArgs.llvm_bc_path
+    benchmarkObj.getInternalRepr()['misc']['llvm_bc_path'] = os.path.basename(pArgs.llvm_bc_path)
+
+  benchmarkObj.getInternalRepr()['misc']['original_spec'] = bSpecPath
+
 
   # Output as YAML
   pArgs.output.write('# Automatically generated from "{}"\n'.format(bSpecPath))
