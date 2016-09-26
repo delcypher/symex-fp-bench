@@ -83,6 +83,10 @@ macro(add_benchmark BENCHMARK_DIR)
         APPEND
         PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "$<TARGET_FILE:${benchmark_target}>.yml"
       )
+    set_property(GLOBAL APPEND PROPERTY
+      SVCB_AUGMENTED_BENCHMARK_SPECIFICATION_FILES
+      "$<TARGET_FILE:${benchmark_target}>.yml"
+    )
     endif()
   endforeach()
   unset(_extract_bc_arg)

@@ -251,6 +251,13 @@ set(EXTERNAL_PROJECT_JOBS
 option(EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES "Emit Augmented Benchmark specification files" ON)
 
 ###############################################################################
+###############################################################################
+define_property(GLOBAL PROPERTY SVCB_AUGMENTED_BENCHMARK_SPECIFICATION_FILES
+  BRIEF_DOCS "List of augmented spec files"
+  FULL_DOCS "List of augmented spec files"
+)
+
+###############################################################################
 # Add add_benchmark() macro
 ###############################################################################
 include(cmake/add_benchmark.cmake)
@@ -311,3 +318,27 @@ add_custom_target(show-correctness-summary
 # Benchmarks
 ###############################################################################
 add_subdirectory(benchmarks)
+
+###############################################################################
+# Output list of augmented spec files
+###############################################################################
+if (EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES)
+  get_property(list_of_augmented_spec_files
+    GLOBAL PROPERTY
+    SVCB_AUGMENTED_BENCHMARK_SPECIFICATION_FILES
+  )
+  list(SORT list_of_augmented_spec_files)
+  add_custom_command(OUTPUT augmented_spec_files.txt
+    COMMAND ${CMAKE_COMMAND} -E remove augmented_spec_files.txt
+  )
+  foreach (specfile ${list_of_augmented_spec_files})
+    add_custom_command(OUTPUT augmented_spec_files.txt
+      COMMAND ${CMAKE_COMMAND} -E echo
+        ${specfile} >> augmented_spec_files.txt
+      APPEND
+    )
+  endforeach()
+  add_custom_target(create-augmented-spec-file-list
+    DEPENDS augmented_spec_files.txt
+  )
+endif()

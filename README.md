@@ -119,6 +119,12 @@ make show-tasks
 make show-correctness-summary
 ```
 
+## Generate list of augmented spec files
+
+```
+make create-augmented-spec-file-list
+```
+
 ## Benchmark tools
 
 You can find various tools in `svcb/tools/`.
