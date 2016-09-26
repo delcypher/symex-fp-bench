@@ -54,7 +54,6 @@ macro(add_benchmark BENCHMARK_DIR)
       add_custom_command(TARGET ${benchmark_target}
         POST_BUILD
         COMMAND ${WLLVM_EXTRACT_BC_TOOL} "$<TARGET_FILE:${benchmark_target}>" -o "$<TARGET_FILE:${benchmark_target}>.bc"
-        # FIXME: BYPRODUCTS can't take a generator expression so the clean target won't delete the LLVM bitcode files.
         COMMENT "Running ${WLLVM_EXTRACT_BC_TOOL} on ${benchmark_target}"
         ${ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG}
       )
