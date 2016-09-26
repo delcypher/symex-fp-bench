@@ -58,6 +58,11 @@ macro(add_benchmark BENCHMARK_DIR)
         COMMENT "Running ${WLLVM_EXTRACT_BC_TOOL} on ${benchmark_target}"
         ${ADD_CUSTOM_COMMAND_USES_TERMINAL_ARG}
       )
+      # Make sure the output file gets removed when the `clean` target is invoked
+      set_property(DIRECTORY
+        APPEND
+        PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "$<TARGET_FILE:${benchmark_target}>.bc"
+      )
     endif()
 
     if (EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES)
@@ -73,6 +78,11 @@ macro(add_benchmark BENCHMARK_DIR)
           "--exe-path" "$<TARGET_FILE:${benchmark_target}>"
           ${_extract_bc_arg}
         COMMENT "Generating augmented benchmark specification file for ${benchmark_target}"
+      )
+      # Make sure the output file gets removed when the `clean` target is invoked
+      set_property(DIRECTORY
+        APPEND
+        PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "$<TARGET_FILE:${benchmark_target}>.yml"
       )
     endif()
   endforeach()
