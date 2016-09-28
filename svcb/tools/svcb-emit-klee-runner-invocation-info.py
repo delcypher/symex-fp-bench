@@ -45,7 +45,7 @@ def main(args):
   logging.basicConfig(level=logLevel)
   _logger = logging.getLogger(__name__)
 
-  invocationInfos = { 'schema':0, 'jobs':[]}
+  invocationInfos = { 'schema_version':0, 'jobs':[]}
 
   for path in pargs.augmented_spec_file_list:
     strippedPath = path.strip() # Remove trailing whitespace and newlines
