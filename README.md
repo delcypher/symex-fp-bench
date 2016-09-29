@@ -129,29 +129,29 @@ make create-augmented-spec-file-list
 
 You can find various tools in `svcb/tools/`.
 
-## `category-count.py`
+### `category-count.py`
 
 This tool will recursively traverse a specified directory parsing all found `spec.yml` files and reporting the found categories and how
 many benchmarks are in each category.
 
-## `correctness-count.py`
+### `correctness-count.py`
 
 This tool will recursively traverse a specified directory parsing all found `spec.yml` files and reporting all the found verification tasks.
 
-## `filter-augmented-spec-list.py`
+### `filter-augmented-spec-list.py`
 
 Filter a list of augented spec files by some criteria.
 
-## `svcb-emit-cmake-decls.py`
+### `svcb-emit-cmake-decls.py`
 
 A tool for internal use that when given a `spec.yml` file will declare all the targets (i.e. the benchmarks) to be built for the CMake build system.
 
-## `svcb-show-targets.py`
+### `svcb-show-targets.py`
 
 This tool when given a `spec.yml` file will parse it and display all the benchmarks declared by the file. Note there will only be multiple
 benchmarks in a `spec.yml` file is multiple variants are declared in it.
 
-## `svcb-emit-klee-runner-invocation-info.py`
+### `svcb-emit-klee-runner-invocation-info.py`
 
 This tool when given a file containing of a list of augmented spec files will
 generate an invocation info file suitable for use by the [klee-runner](svcb-emit-klee-runner-invocation-info.py)
