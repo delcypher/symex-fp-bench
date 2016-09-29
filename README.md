@@ -138,6 +138,10 @@ many benchmarks are in each category.
 
 This tool will recursively traverse a specified directory parsing all found `spec.yml` files and reporting all the found verification tasks.
 
+## `filter-augmented-spec-list.py`
+
+Filter a list of augented spec files by some criteria.
+
 ## `svcb-emit-cmake-decls.py`
 
 A tool for internal use that when given a `spec.yml` file will declare all the targets (i.e. the benchmarks) to be built for the CMake build system.
@@ -146,3 +150,27 @@ A tool for internal use that when given a `spec.yml` file will declare all the t
 
 This tool when given a `spec.yml` file will parse it and display all the benchmarks declared by the file. Note there will only be multiple
 benchmarks in a `spec.yml` file is multiple variants are declared in it.
+
+## `svcb-emit-klee-runner-invocation-info.py`
+
+This tool when given a file containing of a list of augmented spec files will
+generate an invocation info file suitable for use by the [klee-runner](svcb-emit-klee-runner-invocation-info.py)
+framework.
+
+## Exporting an invocation info file for the klee-runner framework
+
+The [klee-runner framework](https://github.com/delcypher/klee-runner) consumes
+an invocation info file to know how KLEE should run a benchmark. The following
+steps can be performed to generate this file after successfully building the
+benchmarks.
+
+```
+# Create `augmented_spec_files.txt`
+make create-augmented-spec-file-list
+
+# Filter the list using `filter-augmented-spec-list.py` (optional)
+/path/to/fp-bench/svcb/tools/filter-augmented-spec-list.py --categories examples -- augmented_spec_files.txt > examples.txt
+
+# Generate invocation info file
+/path/to/fp-bench/svcb/tools/svcb-emit-klee-runner-invocation-info.py examples.txt > examples_invocation_info.yml
+```
