@@ -95,6 +95,18 @@ with a `.bc` suffix. Note `extract-bc` must be in your `PATH`.
 
 If the `WLLVM_RUN_EXTRACT_BC` CMake option is set to `FALSE` you will need to run the `extract-bc` tool manually.
 
+## Augmented benchmark specification files
+
+These files can be emitted by the build system (see the `EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES` option) when
+building the benchmarks (there is a file per target). These files comply to the
+benchmark specification format but differ from regular `spec.yml` files in the
+following ways:
+
+* All variants are removed. The file describes only a single benchmark.
+* The `misc` property is added that contains additional properties. These are:
+  `exe_path` (Name of the corresponding binary), `llvm_bc_path` (name of the corresponding LLVM bitcode
+  if built using wllvm), and `original_spec` (absolute path to the `spec.yml` file that the file was generated from).
+
 ## Running schema tests
 
 ```
