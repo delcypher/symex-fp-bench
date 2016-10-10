@@ -26,6 +26,8 @@ def main(args):
                       action='store_true',
                       default=False,
                       dest='show_benchmark_names')
+  parser.add_argument("--all-categories", dest='all_categories', type=str,
+      nargs='+', default=None, help='Only count benchmarks belonging to all the specified categories')
   parser.add_argument("directory",
                       type=str,
                       help="Directory to traverse")
@@ -43,6 +45,7 @@ def main(args):
   benchmarkFileParseFailures = set()
   categoryToBenchmarkNames = {}
   uncategorisedBenchmarks = set()
+  benchmarksFilteredOut = set()
   benchmarkToFileMap = dict()
 
   # Traverse directory
@@ -75,6 +78,18 @@ def main(args):
           if len(benchmarkObj.categories) == 0:
             uncategorisedBenchmarks.add(benchmarkObj.name)
             continue
+          if pargs.all_categories is not None:
+            # Filter out benchmarks not in all specified categories
+            filterOut = False
+            for category in pargs.all_categories:
+              if category not in benchmarkObj.categories:
+                benchmarksFilteredOut.add(benchmarkObj.name)
+                _logger.debug('Filtering out "{}" because "{}" is not in category'.format(benchmarkObj.name, category))
+                filterOut = True
+                break
+            if filterOut:
+              continue
+
           # Handle categories
           for category in benchmarkObj.categories:
             if categoryToBenchmarkNames.get(category) == None:
@@ -87,6 +102,7 @@ def main(args):
   print("# of file(s) unsuccessfully parsed: {}".format(len(benchmarkFileParseFailures)))
   print("# of benchmarks: {}".format(len(benchmarkToFileMap.keys())))
   print("# of uncategorised benchmarks: {}".format(len(uncategorisedBenchmarks)))
+  print("# of filtered out benchmarks: {}".format(len(benchmarksFilteredOut)))
   print("")
   print("=== Categories ===")
   # Show categories with counts, sorted by category name
