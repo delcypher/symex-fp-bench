@@ -6,9 +6,15 @@ add_subdirectory(examples)
 # However for convenience we have the build system pick up
 # the directories of each team if they are present in the source tree.
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/imperial")
-  add_subdirectory(imperial)
+  option(BUILD_IMPERIAL_BENCHMARKS "Build the Imperial team's benchmarks" ON)
+  if (BUILD_IMPERIAL_BENCHMARKS)
+    add_subdirectory(imperial)
+  endif()
 endif()
 
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/aachen")
-  add_subdirectory(aachen)
+  option(BUILD_AACHEN_BENCHMARKS "Build the Aachen team's benchmarks" ON)
+  if (BUILD_AACHEN_BENCHMARKS)
+    add_subdirectory(aachen)
+  endif()
 endif()
