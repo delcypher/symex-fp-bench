@@ -349,6 +349,45 @@ class TestSchema(unittest.TestCase):
               'correct': False,
               'counter_examples': [
                 {
+                  'description': 'This is not the only error',
+                  'locations': [
+                    {
+                      'file': 'a.c',
+                      'line': 1,
+                      'column': 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+      },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateVariantWithExhaustiveCounterExamples(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'variants': {
+        'config1': {
+          'defines': {
+              'FOO':None,
+              'BAR':'BAZ',
+              'NUM':'0'
+            },
+          'verification_tasks': {
+            'no_assert_fail': {
+              'correct': False,
+              'exhaustive_counter_examples': True,
+              'counter_examples': [
+                {
                   'description': 'This is the only error',
                   'locations': [
                     {

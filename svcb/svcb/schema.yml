@@ -99,6 +99,12 @@ definitions:
             - locations
       description:
         type: string
+      exhaustive_counter_examples:
+        # If specified and true this indicates that the listed counter examples is an exhaustive list.
+        # I.e. there should not be any other property violations other than those listed. If
+        # `exhaustive_counter_examples` is false or not specified then the list of counter examples
+        # may or may not be exhaustive.
+        type: boolean
     additionalProperties: false
     required:
       - correct
