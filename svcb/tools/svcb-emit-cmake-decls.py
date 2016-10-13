@@ -36,6 +36,12 @@ def main(args):
                       type=argparse.FileType('w'),
                       default=sys.stdout,
                       help='Output location (default stdout)')
+  parser.add_argument('--load-dependency-handlers',
+                      dest='load_dependency_handlers',
+                      default=[],
+                      nargs='+',
+                      help='Additional dependency handlers to load')
+
 
   pArgs = parser.parse_args()
   logLevel = getattr(logging, pArgs.log_level.upper(),None)
@@ -60,7 +66,12 @@ def main(args):
   # Create a CMakeDependencyDispatcher using the default handlers
   dispatcher = svcb.build.CMakeDependencyDispatcher.getDefaultDispatcher()
 
-  # TODO: Support loading additional handlers
+  # Load additional handlers
+  for fileName in pArgs.load_dependency_handlers:
+    if not os.path.exists(fileName):
+      _logger.error('Dependency handler "{}" does not exist'.format(fileName))
+      return 1
+    dispatcher.loadHandlerFromFile(fileName)
 
   benchmarkObjs = svcb.benchmark.getBenchmarks(benchSpec)
   _logger.debug('Found {} benchmark(s)'.format(len(benchmarkObjs)))
@@ -69,6 +80,7 @@ def main(args):
                                                supportedArchitecture=pArgs.architecture,
                                                dependencyDispatcher=dispatcher)
   pArgs.output.write(cmakeDeclStr)
+  return 0
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))

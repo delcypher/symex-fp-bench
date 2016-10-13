@@ -15,6 +15,10 @@ class CMakeDependencyDispatchException(Exception):
   def __init__(self, msg):
     self.message = msg
 
+class CMakeDependencyHandlerLoadException(Exception):
+  def __init__(self, msg):
+    self.message = msg
+
 class GenerateCMakeDeclsException(Exception):
   def __init__(self, msg):
     self.message = msg
@@ -80,6 +84,34 @@ class CMakeDependencyDispatcher(object):
 
     return newObj
 
+  def loadHandlerFromFile(self, filePath):
+    # HACK: use reference type so `handlerCalled` can be modifed by `registerFunction`
+    # and have its changes be visible
+    handlerCalled = [False]
+    def registerFunction(name, fn):
+      self.register(name, fn)
+      handlerCalled[0] = True
+      return None
+
+    with open(filePath, 'r') as f:
+      c = None
+      try:
+        c = compile(f.read(), filePath, 'exec')
+      except SyntaxError as e:
+        msg = "Syntax error: {}:{}:{}\n".format(e.filename, e.lineno, e.offset)
+        msg += e.text.strip() + "\n"
+        msg += " "*(e.offset - 1) + "^" # Hack carret style diagnoistc
+        _logger.error(msg)
+        raise CMakeDependencyHandlerLoadException(msg)
+
+      # Provide a simple global environment
+      g = {'register_handler': registerFunction }
+      exec(c, g, None)
+      if not handlerCalled[0]:
+        msg = 'Dependency handler not registered by code in "{}"'.format(filePath)
+        _logger.error(msg)
+        raise CMakeDependencyHandlerLoadException(msg)
+      return
 
   def getDeclsFor(self, dependencyName, cmakeDepInfo):
     """
@@ -102,18 +134,18 @@ class CMakeDependencyDispatcher(object):
 
     # Sanity check the results
     if not isinstance(result, tuple):
-      msg = 'Handler for dependency "{}" did not return a tuple'.format(name)
+      msg = 'Handler for dependency "{}" did not return a tuple'.format(dependencyName)
       _logger.error(msg)
       raise CMakeDependencyRegisterException(msg)
 
     if len(result) != 2:
-      msg = 'Handler for dependency "{}" did not return a tuple with two elements'.format(name)
+      msg = 'Handler for dependency "{}" did not return a tuple with two elements'.format(dependencyName)
       _logger.error(msg)
       raise CMakeDependencyRegisterException(msg)
 
     for index in range(0,2):
       if not isinstance(result[index], str):
-        msg = 'The element at index {} in the tuple returned by the handler for dependency "{}" should be a string'.format(index, name)
+        msg = 'The element at index {} in the tuple returned by the handler for dependency "{}" should be a string'.format(index, dependencyName)
         _logger.error(msg)
         raise CMakeDependencyRegisterException(msg)
 

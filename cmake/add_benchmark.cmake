@@ -15,6 +15,25 @@ set(SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS
   "${SVCB_DIR}/tools/svcb-emit-cmake-augmented-spec.py"
 )
 
+set(SVCOMP_DEPENDENCY_HANDLERS "")
+
+# Tell the build system about an additional dependency handler declared in
+# `pythonFile`.  Subsequent calls to `add_benchmark()` in the directory (and
+# sub directories) `add_cmake_dependency_handler()` is called in will use
+# the additional dependency handler.
+macro(add_cmake_dependency_handler pythonFile)
+  if ("${pythonFile}" STREQUAL "")
+    message(FATAL_ERROR "pythonFile argument cannot be empty")
+  endif()
+  set(_HANDLER_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${pythonFile}")
+  if (NOT EXISTS "${_HANDLER_FILE}")
+    message(FATAL_ERROR "Dependency handler file \"${_HANDLER_FILE}\" does not exist")
+  endif()
+  list(APPEND SVCOMP_DEPENDENCY_HANDLERS "${_HANDLER_FILE}")
+  list(APPEND SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS "${_HANDLER_FILE}")
+  unset(_HANDLER_FILE)
+endmacro()
+
 macro(add_benchmark BENCHMARK_DIR)
   set(INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${BENCHMARK_DIR}/spec.yml)
   set(OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${BENCHMARK_DIR}_targets.cmake)
@@ -32,10 +51,23 @@ macro(add_benchmark BENCHMARK_DIR)
     message(STATUS "Generating \"${OUTPUT_FILE}\"")
     get_filename_component(OUTPUT_DIR "${OUTPUT_FILE}" DIRECTORY)
     file(MAKE_DIRECTORY ${OUTPUT_DIR})
+
+    # If there are additional dependency handlers construct the command line
+    # to request them to be loaded.
+    set(_handler_args "")
+    list(LENGTH SVCOMP_DEPENDENCY_HANDLERS SVCOMP_DEPENDENCY_HANDLERS_LENGTH)
+    if ("${SVCOMP_DEPENDENCY_HANDLERS_LENGTH}" GREATER 0)
+      list(APPEND _handler_args "--load-dependency-handlers")
+      foreach (handler ${SVCOMP_DEPENDENCY_HANDLERS})
+        list(APPEND _handler_args "${handler}")
+      endforeach()
+    endif()
+
     execute_process(COMMAND ${PYTHON_EXECUTABLE} "${SVCB_DIR}/tools/svcb-emit-cmake-decls.py"
                             ${INPUT_FILE}
                             --architecture ${SVCOMP_ARCHITECTURE}
                             --output ${OUTPUT_FILE}
+                            ${_handler_args}
                     RESULT_VARIABLE RESULT_CODE
                    )
     if (NOT ${RESULT_CODE} EQUAL 0)
@@ -44,6 +76,7 @@ macro(add_benchmark BENCHMARK_DIR)
       file(REMOVE "${OUTPUT_FILE}")
       message(FATAL_ERROR "Failed to process benchmark ${BENCHMARK_DIR}. With error ${RESULT_CODE}")
     endif()
+    unset(_handler_args)
   endif()
   # Include the generated file
   include(${OUTPUT_FILE})

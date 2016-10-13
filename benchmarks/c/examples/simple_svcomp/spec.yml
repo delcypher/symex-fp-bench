@@ -5,6 +5,7 @@ categories:
   - do_not_use_in_study
 dependencies:
   svcomp_klee_runtime: {}
+  toy_library: {}
 language: c99
 name: simple_svcomp
 schema_version: 0
