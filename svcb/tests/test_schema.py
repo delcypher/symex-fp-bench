@@ -799,14 +799,11 @@ class TestSchema(unittest.TestCase):
       'name': 'mybenchmark',
       'sources': ['a.c', 'b.c'],
       'verification_tasks': { 'no_assert_fail': {'correct': True} },
-      'dependencies': { 'xxx': None },
+      'dependencies': { 'xxx': {}},
     }
     self.appendSchemaVersion(s)
-    msgRegex= r"Additional properties are not allowed \('xxx' was unexpected\)"
-    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
-      schema.validateBenchmarkSpecification(s)
-    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
-      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
   def testValidateEmptyDeps(self):
     s = {

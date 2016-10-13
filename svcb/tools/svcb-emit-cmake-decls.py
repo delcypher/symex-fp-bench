@@ -57,11 +57,17 @@ def main(args):
   bSpecPath = os.path.realpath(pArgs.bench_spec_file.name)
   sourceFileDirectory = os.path.dirname(bSpecPath)
 
+  # Create a CMakeDependencyDispatcher using the default handlers
+  dispatcher = svcb.build.CMakeDependencyDispatcher.getDefaultDispatcher()
+
+  # TODO: Support loading additional handlers
+
   benchmarkObjs = svcb.benchmark.getBenchmarks(benchSpec)
   _logger.debug('Found {} benchmark(s)'.format(len(benchmarkObjs)))
   cmakeDeclStr = svcb.build.generateCMakeDecls(benchmarkObjs,
                                                sourceRootDir=sourceFileDirectory,
-                                               supportedArchitecture=pArgs.architecture)
+                                               supportedArchitecture=pArgs.architecture,
+                                               dependencyDispatcher=dispatcher)
   pArgs.output.write(cmakeDeclStr)
 
 if __name__ == '__main__':
