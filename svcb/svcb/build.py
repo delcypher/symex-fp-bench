@@ -4,6 +4,7 @@ from . import benchmark
 from . import schema
 import logging
 import os
+import sys
 
 _logger = logging.getLogger(__name__)
 
@@ -93,25 +94,31 @@ class CMakeDependencyDispatcher(object):
       handlerCalled[0] = True
       return None
 
-    with open(filePath, 'r') as f:
-      c = None
-      try:
-        c = compile(f.read(), filePath, 'exec')
-      except SyntaxError as e:
-        msg = "Syntax error: {}:{}:{}\n".format(e.filename, e.lineno, e.offset)
-        msg += e.text.strip() + "\n"
-        msg += " "*(e.offset - 1) + "^" # Hack carret style diagnoistc
-        _logger.error(msg)
-        raise CMakeDependencyHandlerLoadException(msg)
+    # Provide a simple global environment
+    g = {'register_handler': registerFunction }
+    l = {}
+    c = None
+    try:
+      if sys.version_info >= (3,):
+        with open(filePath, 'r') as f:
+          c = compile(f.read(), filePath, 'exec')
+          # YUCK: Python 2.7.6 complains about `exec(c,g,l)` being present in the code
+          # even if it would never be executed so hack around this by using `eval()`.
+          eval('exec(c,g,l)')
+      else:
+        execfile(filePath, g, l)
+    except SyntaxError as e:
+      msg = "Syntax error: {}:{}:{}\n".format(e.filename, e.lineno, e.offset)
+      msg += e.text.strip() + "\n"
+      msg += " "*(e.offset - 1) + "^" # Hack carret style diagnoistc
+      _logger.error(msg)
+      raise CMakeDependencyHandlerLoadException(msg)
 
-      # Provide a simple global environment
-      g = {'register_handler': registerFunction }
-      exec(c, g, None)
-      if not handlerCalled[0]:
-        msg = 'Dependency handler not registered by code in "{}"'.format(filePath)
-        _logger.error(msg)
-        raise CMakeDependencyHandlerLoadException(msg)
-      return
+    if not handlerCalled[0]:
+      msg = 'Dependency handler not registered by code in "{}"'.format(filePath)
+      _logger.error(msg)
+      raise CMakeDependencyHandlerLoadException(msg)
+    return
 
   def getDeclsFor(self, dependencyName, cmakeDepInfo):
     """

@@ -1,10 +1,8 @@
-import svcb
-import svcb.build
-from svcb.build import *
-
 def generate_toy_library_dependency_code(depAndTargetInfo):
+  import svcb
+  import svcb.build
   # Unpack the needed information
-  assert isinstance(depAndTargetInfo, CMakeDependencyAndTargetInfo)
+  assert isinstance(depAndTargetInfo, svcb.build.CMakeDependencyAndTargetInfo)
   info = depAndTargetInfo.dependencyInfo
   targetName = depAndTargetInfo.targetName
   enableTargetCMakeVariable = depAndTargetInfo.enableTargetCMakeVariable
