@@ -95,6 +95,7 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
   # We should probably remove this option entirely and fix up the tests to
   # prevent abuse.
   assert isinstance(benchSpec, dict)
+  benchmarkSpecs = []
   benchmarkObjs = []
   if 'variants' in benchSpec:
     # Create a ``Benchmark`` object from each variant
@@ -150,19 +151,23 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
       else:
         assert 'verification_tasks' in benchSpecCopy
 
-      benchmarkObjs.append(Benchmark(benchSpecCopy))
+      benchmarkSpecs.append(benchSpecCopy)
   else:
     # Single benchmark
     # Make a copy to work with
     benchSpecCopy = copy.deepcopy(benchSpec)
-    benchmarkObjs.append(Benchmark(benchSpecCopy))
+    benchmarkSpecs.append(benchSpecCopy)
 
-  # Add implicit verification_tasks
-  if addImplicitVerificationTasks:
-    for bObj in benchmarkObjs:
-      verificationTasks = bObj.getInternalRepr()['verification_tasks']
+  # Make the benchmark objects from the specs
+  for benchSpecCopy in benchmarkSpecs:
+    # Add implicit verification tasks
+    if addImplicitVerificationTasks:
+      verificationTasks = benchSpecCopy['verification_tasks']
       for (task, properties) in DefaultVerificationTaskStatuses.items():
         if task not in verificationTasks:
           verificationTasks[task] = copy.deepcopy(properties)
+
+    # Finally build the object
+    benchmarkObjs.append(Benchmark(benchSpecCopy))
 
   return benchmarkObjs
