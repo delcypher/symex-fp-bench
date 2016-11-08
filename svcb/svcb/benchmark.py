@@ -167,6 +167,14 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
         if task not in verificationTasks:
           verificationTasks[task] = copy.deepcopy(properties)
 
+    # Add implicit `exhaustive_counter_examples` field.
+    for (task, properties) in benchSpecCopy['verification_tasks'].items():
+      if properties['correct'] is False and not 'exhaustive_counter_examples' in properties:
+        if 'counter_examples' in properties:
+          properties['exhaustive_counter_examples'] = True
+        else:
+          properties['exhaustive_counter_examples'] = False
+
     # Finally build the object
     benchmarkObjs.append(Benchmark(benchSpecCopy))
 
