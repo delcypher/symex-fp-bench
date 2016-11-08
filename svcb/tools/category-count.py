@@ -73,7 +73,12 @@ def main(args):
         benchmarkObjs = svcb.benchmark.getBenchmarks(benchSpec)
         assert len(benchmarkObjs) > 0
         for benchmarkObj in benchmarkObjs:
-          assert benchmarkObj.name not in benchmarkToFileMap
+          if benchmarkObj.name in benchmarkToFileMap:
+            _logger.error('Attempted to load benchmark "{}" ({}) but a benchmark with the same name was already loaded from "{}"'.format(
+              benchmarkObj.name,
+              fullFileName,
+              benchmarkToFileMap[benchmarkObj.name]))
+            return 1
           benchmarkToFileMap[benchmarkObj.name] = fullFileName
           if len(benchmarkObj.categories) == 0:
             uncategorisedBenchmarks.add(benchmarkObj.name)
