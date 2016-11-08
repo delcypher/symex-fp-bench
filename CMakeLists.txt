@@ -183,6 +183,43 @@ foreach (flag ${SVCOMP_BOTH_WARNING_FLAGS} ${SVCOMP_CXX_WARNING_FLAGS})
 endforeach()
 
 ###############################################################################
+# Support building with profiling
+###############################################################################
+option(BUILD_WITH_PROFILING "Build benchmarks with profiling" OFF)
+if (BUILD_WITH_PROFILING)
+  message(STATUS "Profiling enabled")
+  set(PROFILING_FLAGS
+    "--coverage"
+    # TODO: Use -fprofile-dir ?
+  )
+  foreach (f ${PROFILING_FLAGS})
+    SVCOMP_SANITIZE_FLAG_NAME(sanitized_name "${f}")
+    # HACK: The linker needs to know about the flag too
+    # so pretend it's a library so it gets put in the link line.
+    set(CMAKE_REQUIRED_LIBRARIES "${f}")
+    CHECK_C_COMPILER_FLAG("${f}" HAS_${sanitized_name}_C)
+    unset(CMAKE_REQUIRED_LIBRARIES)
+    if (HAS_${sanitized_name}_C)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${f}")
+    else()
+      message(FATAL_ERROR "C Compiler is required to support flag \"${f}\"")
+    endif()
+    # HACK: The linker needs to know about the flag too
+    # so pretend it's a library so it gets put in the link line.
+    set(CMAKE_REQUIRED_LIBRARIES "${f}")
+    CHECK_CXX_COMPILER_FLAG("${f}" HAS_${sanitized_name}_CXX)
+    unset(CMAKE_REQUIRED_LIBRARIES)
+    if (HAS_${sanitized_name}_CXX)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${f}")
+    else()
+      message(FATAL_ERROR "C++ Compiler is required to support flag \"${f}\"")
+    endif()
+  endforeach()
+else()
+  message(STATUS "Profiling disabled")
+endif()
+
+###############################################################################
 # Detect libraries that benchmarks may depend on
 ###############################################################################
 # Pthreads

@@ -95,6 +95,10 @@ with a `.bc` suffix. Note `extract-bc` must be in your `PATH`.
 
 If the `WLLVM_RUN_EXTRACT_BC` CMake option is set to `FALSE` you will need to run the `extract-bc` tool manually.
 
+# Building with run-time profiling
+
+Pass `-DBUILD_WITH_PROFILING=ON` to CMake.
+
 ## Augmented benchmark specification files
 
 These files can be emitted by the build system (see the `EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES` option) when
