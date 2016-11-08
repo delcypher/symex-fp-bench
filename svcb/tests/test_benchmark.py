@@ -101,12 +101,12 @@ class TestBenchmark(unittest.TestCase):
     self.assertEqual(barBenchmark.language, 'c99')
     self.assertEqual(barBenchmark.name, 'basename_bar')
     self.assertEqual(barBenchmark.sources, ['a.c', 'b.c'])
-    self.assertEqual(barBenchmark.verificationTasks,{ 'no_assert_fail': {'correct': False} })
+    self.assertEqual(barBenchmark.verificationTasks,{ 'no_assert_fail': {'correct': False, 'exhaustive_counter_examples': False}})
     self.assertTrue(barBenchmark.isLanguageC())
     self.assertFalse(barBenchmark.isLanguageCXX())
     self.assertEqual(barBenchmark.misc, {'dummy':1})
 
-  def testCreateSimpleWithImplicitVerficationTasks(self):
+  def testCreateSimpleWithImplicitVerficationTasksNoCex(self):
     s = {
       'architectures': ['x86_64'],
       'categories': ['xxx'],
@@ -133,7 +133,50 @@ class TestBenchmark(unittest.TestCase):
     self.assertFalse(b.isLanguageCXX())
 
     expectedTasks = copy.deepcopy(svcb.benchmark.DefaultVerificationTaskStatuses)
-    expectedTasks['no_assert_fail'] = { 'correct': False}
+    expectedTasks['no_assert_fail'] = {'correct': False, 'exhaustive_counter_examples': False}
+    self.assertEqual(b.verificationTasks, expectedTasks)
+
+  def testCreateSimpleWithImplicitVerficationTasksWithCex(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': ['xxx'],
+      'language': 'c99',
+      'name': 'foo',
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {
+        'correct': False,
+        'counter_examples': [
+          {
+            "locations": [
+              {
+                "line" : 1,
+                "file" : "a_is_a_good_name.c",
+              }
+            ]
+          },
+        ]}
+      },
+    }
+    self.appendSchemaVersion(s)
+    # Validate benchmark specification
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+    benchmarkObjs = svcb.benchmark.getBenchmarks(s) # Default addImplicitVerificationTasks=True
+    self.assertTrue(len(benchmarkObjs) == 1)
+    # Test properties of the benchmark object
+    b = benchmarkObjs[0]
+    self.assertEqual(b.name, "foo")
+    self.assertEqual(b.sources, ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'])
+    self.assertEqual(b.architectures, ['x86_64'])
+    self.assertEqual(b.defines, {}) # Implicitly empty
+    self.assertEqual(b.language, 'c99')
+    self.assertEqual(b.description, '') # Implicity empty
+    self.assertEqual(b.categories, {'xxx'})
+    self.assertTrue(b.isLanguageC())
+    self.assertFalse(b.isLanguageCXX())
+
+    expectedTasks = copy.deepcopy(svcb.benchmark.DefaultVerificationTaskStatuses)
+    expectedTasks['no_assert_fail'] = copy.deepcopy(s['verification_tasks']['no_assert_fail'])
+    expectedTasks['no_assert_fail']['exhaustive_counter_examples'] = True # Expected implicitly added field
     self.assertEqual(b.verificationTasks, expectedTasks)
 
 

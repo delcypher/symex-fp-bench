@@ -54,8 +54,9 @@ definitions:
             # the particular verification task.
             type: "null"
       counter_examples:
-        # List of some possible counter examples to correctness (i.e. bugs).
-        # There is no requirement for this list to be exhaustive.
+        # Array of possible counter examples to correctness (i.e. bugs).
+        #
+        # Whether or not this list is exhaustive is dependent on `exhaustive_counter_examples`.
         type: array
         minItems: 1
         uniqueItems: true
@@ -94,10 +95,19 @@ definitions:
       description:
         type: string
       exhaustive_counter_examples:
-        # If specified and true this indicates that the listed counter examples is an exhaustive list.
-        # I.e. there should not be any other property violations other than those listed. If
-        # `exhaustive_counter_examples` is false or not specified then the list of counter examples
-        # may or may not be exhaustive.
+        # FIXME: This property's defaults are complicated we should make it required if `correct` is set to False.
+        #
+        # This property **only has meaning** if `correct` is set to false.
+        #
+        # If this property is not specified and counter examples are specified this property is implicitly assumed to be true.
+        # If this property is not specified and counter examples are **not** specified this property is implicitly assumed to be false.
+        #
+        # If this property is true then the listed counter examples are
+        # exhaustive (i.e. it should not be possible to observe a counter
+        # example for the relevant property other than those listed).
+        #
+        # If this property is false then the listed counter examples are not
+        # exhaustive (i.e. is permissible to observe any counter example to the property).
         type: boolean
     additionalProperties: false
     required:
