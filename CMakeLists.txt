@@ -287,6 +287,11 @@ set(EXTERNAL_PROJECT_JOBS
 ###############################################################################
 option(EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES "Emit Augmented Benchmark specification files" ON)
 
+if (EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES)
+  # Top level target used to build augmented spec files
+  add_custom_target(build-augmented-spec-files ALL)
+endif()
+
 ###############################################################################
 ###############################################################################
 define_property(GLOBAL PROPERTY SVCB_AUGMENTED_BENCHMARK_SPECIFICATION_FILES
@@ -349,7 +354,6 @@ add_custom_target(show-correctness-summary
                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                   COMMENT "Showing benchmark correctness summary"
                  )
-
 
 ###############################################################################
 # Benchmarks

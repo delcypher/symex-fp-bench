@@ -12,7 +12,6 @@ set(SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS
   "${SVCB_DIR}/svcb/schema.yml"
   "${SVCB_DIR}/svcb/util.py"
   "${SVCB_DIR}/tools/svcb-emit-cmake-decls.py"
-  "${SVCB_DIR}/tools/svcb-emit-cmake-augmented-spec.py"
 )
 
 set(SVCOMP_DEPENDENCY_HANDLERS "")
@@ -101,25 +100,28 @@ macro(add_benchmark BENCHMARK_DIR)
       if (WLLVM_RUN_EXTRACT_BC)
         set(_extract_bc_arg "--llvm-bc-path" "$<TARGET_FILE:${benchmark_target}>.bc")
       endif()
-      add_custom_command(TARGET ${benchmark_target}
-        POST_BUILD
+      set(OUTPUT_SPEC_FILE "${CMAKE_CURRENT_BINARY_DIR}/${benchmark_target}.yml")
+      # FIXME: It's dumb that I can't do `OUTPUT $<TARGET_FILE:${benchmark_target}.yml"
+      add_custom_command(OUTPUT "${OUTPUT_SPEC_FILE}"
         COMMAND "${PYTHON_EXECUTABLE}" "${SVCB_DIR}/tools/svcb-emit-cmake-augmented-spec.py"
           "${INPUT_FILE}"
           "${benchmark_target}"
-          "-o" "$<TARGET_FILE:${benchmark_target}>.yml"
+          "-o" "${OUTPUT_SPEC_FILE}"
           "--exe-path" "$<TARGET_FILE:${benchmark_target}>"
           ${_extract_bc_arg}
+        MAIN_DEPENDENCY "${INPUT_FILE}"
+        DEPENDS
+          "${SVCB_DIR}/tools/svcb-emit-cmake-augmented-spec.py"
+          ${SVCOMP_ADDITIONAL_GEN_CMAKE_INC_DEPS}
         COMMENT "Generating augmented benchmark specification file for ${benchmark_target}"
       )
-      # Make sure the output file gets removed when the `clean` target is invoked
-      set_property(DIRECTORY
-        APPEND
-        PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "$<TARGET_FILE:${benchmark_target}>.yml"
+      add_custom_target("build-augmented-spec-${benchmark_target}"
+        DEPENDS "${OUTPUT_SPEC_FILE}")
+      add_dependencies(build-augmented-spec-files "build-augmented-spec-${benchmark_target}")
+      set_property(GLOBAL APPEND PROPERTY
+        SVCB_AUGMENTED_BENCHMARK_SPECIFICATION_FILES
+        "${OUTPUT_SPEC_FILE}"
       )
-    set_property(GLOBAL APPEND PROPERTY
-      SVCB_AUGMENTED_BENCHMARK_SPECIFICATION_FILES
-      "$<TARGET_FILE:${benchmark_target}>.yml"
-    )
     endif()
   endforeach()
   unset(_extract_bc_arg)
