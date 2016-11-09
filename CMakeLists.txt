@@ -380,6 +380,6 @@ if (EMIT_AUGMENTED_BENCHMARK_SPECIFICATION_FILES)
     )
   endforeach()
   add_custom_target(create-augmented-spec-file-list
-    DEPENDS augmented_spec_files.txt
+    DEPENDS build-augmented-spec-files augmented_spec_files.txt
   )
 endif()
