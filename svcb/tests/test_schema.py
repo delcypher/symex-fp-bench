@@ -407,6 +407,45 @@ class TestSchema(unittest.TestCase):
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
+  def testValidateWithExhaustiveCounterExamplesButNoneGiven(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'exhaustive_counter_examples': True,
+        }
+      }
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'exhaustive_counter_examples' cannot be true when no counter examples are provided"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateWithNonExhaustiveCounterExamplesAndNoneGiven(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'name': 'mybenchmark',
+      'sources': ['a.c', 'b.c'],
+      'verification_tasks': {
+        'no_assert_fail': {
+          'correct': False,
+          'exhaustive_counter_examples': False,
+        }
+      }
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
   def testValidateInvalidVariantWithDifferentVerificationTasks(self):
     s = {
       'architectures': ['x86_64'],

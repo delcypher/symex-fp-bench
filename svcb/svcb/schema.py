@@ -157,6 +157,12 @@ def checkVerificationTasks(tasks):
       # Counter examples should not be provided
       if 'counter_examples' in taskProperties:
         raise BenchmarkSpecificationValidationError("Counter examples should not be provided for a benchmark where 'correct' is '{}'".format(taskProperties['correct']))
+    if taskProperties['correct'] is False:
+      # Don't allow missing counter_examples and `exhaustive_counter_examples` to be True
+      if ('exhaustive_counter_examples' in taskProperties and
+        taskProperties['exhaustive_counter_examples'] is True and
+        'counter_examples' not in taskProperties):
+        raise BenchmarkSpecificationValidationError("'exhaustive_counter_examples' cannot be true when no counter examples are provided")
 
 def upgradeBenchmarkSpeciationToVersion(benchSpec, schemaVersion):
   """
