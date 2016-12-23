@@ -1304,7 +1304,7 @@ class TestSchema(unittest.TestCase):
     with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
       schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
 
-  def testValidateSimpleCorrect(self):
+  def testValidateSimpleCorrectWithMisc(self):
     s = {
       'architectures': ['x86_64'],
       'categories': [],
