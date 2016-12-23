@@ -50,6 +50,13 @@ class TestBenchmark(unittest.TestCase):
       'dependencies': { 'klee_runtime': {}},
       'language': 'c99',
       'name': 'basename',
+      'runtime_environment': {
+        'command_line_arguments': ['--foo', '--bar'],
+        'environment_variables': {
+          'FOO': 'BAR',
+          'BAZ': 'TWO',
+        },
+      },
       'sources': ['a.c', 'b.c'],
       'misc': { 'dummy': 1},
       'variants': {
@@ -59,6 +66,12 @@ class TestBenchmark(unittest.TestCase):
           'defines': {'FAIL':'0'},
           'dependencies': { 'pthreads': {} },
           'categories': ['foo_category', 'cheese'],
+          'runtime_environment': {
+            'command_line_arguments': ['--baz'],
+            'environment_variables': {
+              'TEST': 'THREE'
+            },
+          },
         },
         'bar': {
           'verification_tasks':{ 'no_assert_fail': {'correct': False} },
@@ -91,6 +104,14 @@ class TestBenchmark(unittest.TestCase):
     self.assertTrue(fooBenchmark.isLanguageC())
     self.assertFalse(fooBenchmark.isLanguageCXX())
     self.assertEqual(fooBenchmark.misc, {'dummy':1})
+    self.assertEqual(
+      fooBenchmark.runtimeEnvironment['command_line_arguments'],
+      [ '--foo', '--bar', '--baz']
+    )
+    self.assertEqual(
+      fooBenchmark.runtimeEnvironment['environment_variables'],
+      {'BAZ': 'TWO', 'FOO': 'BAR', 'TEST': 'THREE'}
+    )
 
     # Check bar
     self.assertEqual(barBenchmark.architectures, ['x86_64'])
@@ -105,6 +126,14 @@ class TestBenchmark(unittest.TestCase):
     self.assertTrue(barBenchmark.isLanguageC())
     self.assertFalse(barBenchmark.isLanguageCXX())
     self.assertEqual(barBenchmark.misc, {'dummy':1})
+    self.assertEqual(
+      barBenchmark.runtimeEnvironment['command_line_arguments'],
+      ['--foo', '--bar']
+    )
+    self.assertEqual(
+      barBenchmark.runtimeEnvironment['environment_variables'],
+      {'BAZ': 'TWO', 'FOO': 'BAR'}
+    )
 
   def testCreateSimpleWithImplicitVerficationTasksNoCex(self):
     s = {

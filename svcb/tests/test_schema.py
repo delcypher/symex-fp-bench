@@ -1317,3 +1317,246 @@ class TestSchema(unittest.TestCase):
     self.appendSchemaVersion(s)
     schema.validateBenchmarkSpecification(s)
     schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleCorrectWithRuntimeEnv(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+        'environment_variables': {
+          'BAR': 'BAZ',
+        }
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvMissingEnv(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'environment_variables' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvMissingCmdLineArgs(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'environment_variables': {
+          'BAR': 'BAZ',
+        }
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"'command_line_arguments' is a required property"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvNoAdditionalProperties(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+        'environment_variables': {
+          'BAR': 'BAZ',
+        },
+        'bad': True,
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Additional properties are not allowed \('bad' was unexpected\)"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvBadEnvKey(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+        'environment_variables': {
+          'BAR-': 'BAZ',
+        },
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"Additional properties are not allowed \('BAR-' was unexpected\)"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvBadEnvValueType(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+        'environment_variables': {
+          'BAR': 5
+        },
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"5 is not of type 'string'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvBadCmdLineType(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': 5,
+        'environment_variables': {
+          'BAR': "BAZ"
+        },
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"5 is not of type 'array'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateRuntimeEnvBadCmdLineElementType(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ 5 ],
+        'environment_variables': {
+          'BAR': "BAZ"
+        },
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"5 is not of type 'string'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateSimpleCorrectWithMultipleRuntimeEnvs(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+        'environment_variables': {
+          'BAR': 'BAZ',
+        }
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'variants': {
+        'config1': {
+          'runtime_environment': {
+            'command_line_arguments': [ "baz" ],
+            'environment_variables': {
+              'FOO': 'BAZ',
+            },
+          },
+        },
+      },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    schema.validateBenchmarkSpecification(s)
+    schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+
+  def testValidateInvalidWithMultipleRuntimeEnvs(self):
+    s = {
+      'architectures': ['x86_64'],
+      'categories': [],
+      'language': 'c99',
+      'misc': {'foo': 1},
+      'name': 'foo',
+      'runtime_environment': {
+        'command_line_arguments': [ "foo" ],
+        'environment_variables': {
+          'LOL': 'BAZ',
+        }
+      },
+      'sources': ['a_is_a_good_name.c', 'b-IS-also-A-good-name.c'],
+      'variants': {
+        'config1': {
+          'runtime_environment': {
+            'command_line_arguments': [ "baz" ],
+            'environment_variables': {
+              'FOO': 'BAZ',
+              'LOL': 'XXX', # Not allowed to specify 'LOL' twice
+            },
+          },
+        },
+      },
+      'verification_tasks': { 'no_assert_fail': {'correct': True} },
+    }
+    self.appendSchemaVersion(s)
+    msgRegex= r"environment variable\(s\) cannot be specified globally and for variant 'config1'"
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s)
+    with self.assertRaisesRegex(schema.BenchmarkSpecificationValidationError, msgRegex):
+      schema.validateBenchmarkSpecification(s, schema=self.persistentSchema)
+

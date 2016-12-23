@@ -148,6 +148,29 @@ def validateBenchmarkSpecification(benchSpec, schema=None):
               sorted(list(intersectionOfDependencies)),
               variantName))
 
+    # Check that there are no environment variable conflicts
+    if 'variants' in benchSpec:
+      globalEnvVars = set()
+      if 'runtime_environment' in benchSpec:
+        for environment_var in benchSpec['runtime_environment']['environment_variables'].keys():
+          assert isinstance(environment_var, str)
+          globalEnvVars.add(environment_var)
+      if len(globalEnvVars) > 0:
+        for (variantName, variantProperties) in benchSpec['variants'].items():
+          assert isinstance(variantProperties, dict)
+          if 'runtime_environment' in variantProperties:
+            variantEnvVars = set(variantProperties['runtime_environment']['environment_variables'])
+            intersectionOfEnvVars = globalEnvVars.intersection(variantEnvVars)
+            if len(intersectionOfEnvVars) > 0:
+              raise BenchmarkSpecificationValidationError(
+                ("The '{}' environment variable(s) cannot be specified globally "
+                "and for variant '{}'").format(
+                sorted(list(intersectionOfEnvVars)),
+                variantName))
+
+
+
+
   return
 
 def checkVerificationTasks(tasks):

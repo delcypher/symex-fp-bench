@@ -94,6 +94,12 @@ def main(args):
 
   benchmarkObj.getInternalRepr()['misc']['original_spec'] = bSpecPath
 
+  # Do runtime environment substitutions
+  replacement_runtime_env = svcb.benchmark.do_runtime_env_substitutions(
+    benchmarkObj.runtimeEnvironment,
+    os.path.abspath(pArgs.bench_spec_file.name))
+  benchmarkObj.getInternalRepr()['runtime_environment'] = replacement_runtime_env
+
 
   # Output as YAML
   pArgs.output.write('# Automatically generated from "{}"\n'.format(bSpecPath))

@@ -79,8 +79,8 @@ def main(args):
     programPath = os.path.join(os.path.dirname(strippedPath), programPath)
 
     job = {
-      'command_line_arguments': [], # Assume for now that the bencharks don't need this
-      'environment_variables': {}, # Assume for now that the benchmarks don't need any
+      'command_line_arguments': benchmarkObj.runtimeEnvironment['command_line_arguments'],
+      'environment_variables': benchmarkObj.runtimeEnvironment['environment_variables'],
       'program': programPath,
       'misc': {
         'augmented_spec_file': os.path.abspath(strippedPath),

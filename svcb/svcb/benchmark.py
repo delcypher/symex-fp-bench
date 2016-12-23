@@ -2,6 +2,7 @@
 # This file is covered by the license in LICENSE-SVCB.txt
 import copy
 import pprint
+import os
 import re
 
 # This declares dictionary of verification tasks
@@ -34,6 +35,11 @@ class Benchmark(object):
       self._data['dependencies'] = {}
     if 'misc' not in self._data:
       self._data['misc'] = {}
+    if 'runtime_environment' not in self._data:
+      self._data['runtime_environment'] = {
+        'command_line_arguments': [],
+        'environment_variables': {}
+      }
 
   def __str__(self):
     return pprint.pformat(self._data)
@@ -87,6 +93,10 @@ class Benchmark(object):
   def misc(self):
     return self._data['misc']
 
+  @property
+  def runtimeEnvironment(self):
+    return self._data['runtime_environment']
+
 def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
   # FIXME: addImplicitVerificationTasks should always be set to True by clients.
   # It should only ever be set to False in unittests where we want to test
@@ -114,6 +124,13 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
     if 'description' in benchSpec:
       globalDescription += benchSpec['description']
     globalName = benchSpec['name']
+    globalCmdLineArgs = []
+    globalEnvironmentVars = {}
+    if 'runtime_environment' in benchSpec:
+      assert isinstance(benchSpec['runtime_environment']['command_line_arguments'], list)
+      globalCmdLineArgs.extend(benchSpec['runtime_environment']['command_line_arguments'])
+      assert isinstance(benchSpec['runtime_environment']['environment_variables'], dict)
+      globalEnvironmentVars.update(benchSpec['runtime_environment']['environment_variables'])
     for variantName, variantProperties in benchSpec['variants'].items():
       # Make a copy to work with
       benchSpecCopy = copy.deepcopy(benchSpec)
@@ -123,6 +140,8 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
       benchmarkDependencies = dict(globalDependencies)
       benchmarkCategories = list(globalCategories)
       benchmarkDescription = str(globalDescription)
+      benchmarkCmdLineArgs = list(globalCmdLineArgs)
+      benchmarkEnvironmentVars = dict(globalEnvironmentVars)
       if 'defines' in variantProperties:
         benchmarkDefines.update(variantProperties['defines'])
       if 'dependencies' in variantProperties:
@@ -137,6 +156,13 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
         # Make the description for the benchmark be the concatenation
         # of the global and variant description.
         benchmarkDescription += "\n{}".format(variantProperties['description'])
+      if 'runtime_environment' in variantProperties:
+        # Append variant command line args on to global
+        benchmarkCmdLineArgs.extend(variantProperties['runtime_environment']['command_line_arguments'])
+        # union the environment variables
+        for variantEnvKey in variantProperties['runtime_environment']['environment_variables']:
+          assert variantEnvKey not in globalEnvironmentVars
+        benchmarkEnvironmentVars.update(variantProperties['runtime_environment']['environment_variables'])
       benchmarkName = "{}_{}".format(globalName, variantName)
       del benchSpecCopy['variants']
       benchSpecCopy['defines'] = benchmarkDefines
@@ -144,6 +170,10 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
       benchSpecCopy['dependencies'] = benchmarkDependencies
       benchSpecCopy['categories'] = benchmarkCategories
       benchSpecCopy['description'] = benchmarkDescription
+      benchSpecCopy['runtime_environment'] = {
+        'command_line_arguments': benchmarkCmdLineArgs,
+        'environment_variables': benchmarkEnvironmentVars
+      }
 
       if 'verification_tasks' in variantProperties:
         assert 'verification_tasks' not in benchSpecCopy
@@ -179,3 +209,28 @@ def getBenchmarks(benchSpec, addImplicitVerificationTasks=True):
     benchmarkObjs.append(Benchmark(benchSpecCopy))
 
   return benchmarkObjs
+
+def do_runtime_env_substitutions(runtime_environment, spec_file_path):
+  assert isinstance(runtime_environment, dict)
+  assert isinstance(spec_file_path, str)
+  assert os.path.isabs(spec_file_path)
+  copyRunEnv = runtime_environment.copy()
+  copyRunEnv['command_line_arguments'] = []
+  copyRunEnv['environment_variables'] = {}
+
+  spec_file_dir = os.path.dirname(spec_file_path)
+  if not spec_file_dir.endswith(os.sep):
+    spec_file_dir += os.sep
+
+  def do_subs(original):
+    # FIXME: Support a way to do escaping of `@`
+    replacement = original.replace('@spec_dir@', spec_file_dir)
+    return replacement
+
+  for envKey, envValue in runtime_environment['environment_variables'].items():
+    copyRunEnv['environment_variables'][envKey] = do_subs(envValue)
+
+  for cmdLineArgs in runtime_environment['command_line_arguments']:
+    copyRunEnv['command_line_arguments'].append(do_subs(cmdLineArgs))
+
+  return copyRunEnv

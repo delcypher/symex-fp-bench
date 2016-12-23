@@ -39,6 +39,27 @@ definitions:
     additionalProperties: false
     patternProperties:
       "^[a-zA-Z0-9_-]+$": *dependency_properties
+  runtime_environment: &runtime_environment
+    type: object
+    additionalProperties: false
+    properties:
+      # Both properties have the following substituation variables
+      # available
+      # @spec_dir@ - Absolute path to directory containing spec file.
+      #              Will always end with trailing slash.
+      command_line_arguments:
+        type: array
+        items:
+          type: string
+      environment_variables:
+        type: object
+        additionalProperties: false
+        patternProperties:
+          "^[a-zA-Z0-9_]+$":
+            type: string
+    required:
+      - command_line_arguments
+      - environment_variables
   verification_task_properties: &verification_task_properties
     type: object
     properties:
@@ -202,6 +223,7 @@ properties:
   schema_version:
     type: integer
     minimum: 0
+  runtime_environment: *runtime_environment
   sources:
     type: array
     minItems: 1
@@ -246,6 +268,11 @@ properties:
           # Additional description of this variant.
           description:
             type: string
+          # Additional runtime environment properties. Command line arguments
+          # are appended to the global command line arguments and environment
+          # variables are unioned with global environment variables. It is an
+          # error to have conflicting environment variables.
+          runtime_environment: *runtime_environment
           # This specifies the verification tasks for the benchmark variant.
           # Either `verification_tasks` must be specified for each variant
           # or the global `verification_tasks` must be used.
