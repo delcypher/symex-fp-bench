@@ -3,12 +3,17 @@ env:
 ###############################################################################
   # Must manually specifiy Python path otherwise we pick up TravisCI's install in /opt
   # which does not have our yaml and jsonschema modules :(
-  - C_COMPILER=gcc CXX_COMPILER=g++ PYTHON_EXECUTABLE=/usr/bin/python2
-  - C_COMPILER=gcc CXX_COMPILER=g++ PYTHON_EXECUTABLE=/usr/bin/python3
-  - C_COMPILER=clang-3.4 CXX_COMPILER=clang++-3.4 PYTHON_EXECUTABLE=/usr/bin/python2
-  - C_COMPILER=clang-3.4 CXX_COMPILER=clang++-3.4 PYTHON_EXECUTABLE=/usr/bin/python3
-  - C_COMPILER=wllvm CXX_COMPILER=wllvm++ PYTHON_EXECUTABLE=/usr/bin/python2
-  - C_COMPILER=wllvm CXX_COMPILER=wllvm++ PYTHON_EXECUTABLE=/usr/bin/python3
+  - C_COMPILER=gcc CXX_COMPILER=g++ PYTHON_EXECUTABLE=/usr/bin/python2 PROFILING=0
+  - C_COMPILER=gcc CXX_COMPILER=g++ PYTHON_EXECUTABLE=/usr/bin/python3 PROFILING=0
+  - C_COMPILER=clang-3.4 CXX_COMPILER=clang++-3.4 PYTHON_EXECUTABLE=/usr/bin/python2 PROFILING=0
+  - C_COMPILER=clang-3.4 CXX_COMPILER=clang++-3.4 PYTHON_EXECUTABLE=/usr/bin/python3 PROFILING=0
+  - C_COMPILER=wllvm CXX_COMPILER=wllvm++ PYTHON_EXECUTABLE=/usr/bin/python2 PROFILING=0
+  - C_COMPILER=wllvm CXX_COMPILER=wllvm++ PYTHON_EXECUTABLE=/usr/bin/python3 PROFILING=0
+
+
+  # Profiling builds
+  - C_COMPILER=gcc CXX_COMPILER=g++ PYTHON_EXECUTABLE=/usr/bin/python2 PROFILING=1
+  - C_COMPILER=gcc CXX_COMPILER=g++ PYTHON_EXECUTABLE=/usr/bin/python3 PROFILING=1
 ###############################################################################
 # Use TravisCI legacy infrastructure so we can install the packages we need.
 sudo: required

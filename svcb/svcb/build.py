@@ -258,6 +258,7 @@ endif()
         lang_ver = lang_ver
       )
       if coverage:
+        # FIXME: Test in CMake if the compiler supports `-fprofile-dir=`
         declStr +=  " \"-fprofile-dir={profile_dir}.cov\"".format(profile_dir = targetName)
       declStr += ")\n"
 

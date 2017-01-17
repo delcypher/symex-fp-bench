@@ -5,18 +5,18 @@ BUILD_DIR=${BUILD_DIR:-_build}
 WLLVM_SHA1=b61dd0fd1b9170cef84622e270d72909cd817d1f
 WLLVM_GIT_URL=https://github.com/travitch/whole-program-llvm.git
 
+# Exit if there is an error
+set -e
+
+# Show commands as they are executed
+set -x
+
 export SOURCE_DIR="$(dirname $(cd ${BASH_SOURCE[0]%/*} ; pwd))"
 
 if [ ! -d "${SOURCE_DIR}" ]; then
   echo "\"${SOURCE_DIR}\" is not a directory"
   exit 1
 fi
-
-# Exit if there is an error
-set -e
-
-# Show commands as they are executed
-set -x
 
 # Note we use ``C_COMPILER`` rather than ``CC`` because
 # TravisCI overrides the ``CC`` variable
@@ -36,12 +36,22 @@ if [ "${C_COMPILER}" == "wllvm" ]; then
   export LLVM_COMPILER=clang
 fi
 
+export C_COMPILER
+export CXX_COMPILER
+
 echo "C Compiler:"
 ${C_COMPILER} -v --version
 echo "C++ Compiler:"
 ${CXX_COMPILER} -v --version
 echo "CMake"
 cmake --version
+
+: ${PROFILING?"PROFILING must be set to 0 or 1"}
+if [ "X${PROFILING}" = "X0" ]; then
+  CMAKE_PROFILING_BUILD_FLAG="-DBUILD_WITH_PROFILING=OFF"
+else
+  CMAKE_PROFILING_BUILD_FLAG="-DBUILD_WITH_PROFILING=ON"
+fi
 
 if [ -n "${PYTHON_EXECUTABLE}" ]; then
   CMAKE_PYTHON_FLAG="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
@@ -51,6 +61,10 @@ else
 fi
 
 mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
+
+# Make BUILD_DIR absolute
+BUILD_DIR="$(cd ${BUILD_DIR}; pwd)"
+export BUILD_DIR
 
 # HACK:
 # We need a KLEE header file and runtime library. KLEE's build system is
@@ -69,9 +83,9 @@ CC=${C_COMPILER} \
 CFLAGS="${EXTRA_C_FLAGS}" \
 CXX=${CXX_COMPILER} \
 CXXFLAGS="${EXTRA_CXX_FLAGS}" \
-cmake ${CMAKE_PYTHON_FLAG} "${SOURCE_DIR}"
+cmake ${CMAKE_PYTHON_FLAG} "${CMAKE_PROFILING_BUILD_FLAG}" "${SOURCE_DIR}"
 make check-svcb
-make -j2
+make VERBOSE=1
 make show-categories
 make show-tasks
 make show-correctness-summary
@@ -80,5 +94,9 @@ make show-correctness-summary
 make build-augmented-spec-files
 make create-augmented-spec-file-list
 "${SOURCE_DIR}/scripts/check_augmented_files.sh"
+
+if [ "X${PROFILING}" != "X0" ]; then
+  ${SOURCE_DIR}/scripts/check_coverage_build.sh
+fi
 
 # TODO: If wllvm build check the bitcode files exist and can be read.
