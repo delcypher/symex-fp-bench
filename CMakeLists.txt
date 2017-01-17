@@ -215,9 +215,34 @@ if (BUILD_WITH_PROFILING)
       message(FATAL_ERROR "C++ Compiler is required to support flag \"${f}\"")
     endif()
   endforeach()
+  # Detect if profile build mode has changed.
+  if (NOT DEFINED SVCB_LAST_BUILD_PROFILING)
+    set(SVCB_PROFILE_BUILD_CHANGED ON)
+  else()
+    if (NOT SVCB_LAST_BUILD_PROFILING)
+      set(SVCB_PROFILE_BUILD_CHANGED ON)
+    else()
+      set(SVCB_PROFILE_BUILD_CHANGED OFF)
+    endif()
+  endif()
+  # Record this so we can detect when the option gets changed.
+  set(SVCB_LAST_BUILD_PROFILING ON CACHE INTERNAL "" FORCE)
 else()
   message(STATUS "Profiling disabled")
+  # Detect if profile build mode has changed.
+  if (NOT DEFINED SVCB_LAST_BUILD_PROFILING)
+    set(SVCB_PROFILE_BUILD_CHANGED ON)
+  else()
+    if (NOT SVCB_LAST_BUILD_PROFILING)
+      set(SVCB_PROFILE_BUILD_CHANGED OFF)
+    else()
+      set(SVCB_PROFILE_BUILD_CHANGED ON)
+    endif()
+  endif()
+  # Record this so we can detect when the option gets changed.
+  set(SVCB_LAST_BUILD_PROFILING OFF CACHE INTERNAL "" FORCE)
 endif()
+message(STATUS "SVCB_PROFILE_BUILD_CHANGED: ${SVCB_PROFILE_BUILD_CHANGED}")
 
 ###############################################################################
 # Detect libraries that benchmarks may depend on
