@@ -5,6 +5,13 @@ BUILD_DIR=${BUILD_DIR:-_build}
 WLLVM_SHA1=b61dd0fd1b9170cef84622e270d72909cd817d1f
 WLLVM_GIT_URL=https://github.com/travitch/whole-program-llvm.git
 
+export SOURCE_DIR="$(dirname $(cd ${BASH_SOURCE[0]%/*} ; pwd))"
+
+if [ ! -d "${SOURCE_DIR}" ]; then
+  echo "\"${SOURCE_DIR}\" is not a directory"
+  exit 1
+fi
+
 # Exit if there is an error
 set -e
 
@@ -38,6 +45,7 @@ cmake --version
 
 if [ -n "${PYTHON_EXECUTABLE}" ]; then
   CMAKE_PYTHON_FLAG="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
+  export PYTHON_EXECUTABLE
 else
   CMAKE_PYTHON_FLAG=""
 fi
@@ -61,11 +69,16 @@ CC=${C_COMPILER} \
 CFLAGS="${EXTRA_C_FLAGS}" \
 CXX=${CXX_COMPILER} \
 CXXFLAGS="${EXTRA_CXX_FLAGS}" \
-cmake ${CMAKE_PYTHON_FLAG} ../
+cmake ${CMAKE_PYTHON_FLAG} "${SOURCE_DIR}"
 make check-svcb
 make -j2
 make show-categories
 make show-tasks
 make show-correctness-summary
+
+# Augmented spec files
+make build-augmented-spec-files
+make create-augmented-spec-file-list
+"${SOURCE_DIR}/scripts/check_augmented_files.sh"
 
 # TODO: If wllvm build check the bitcode files exist and can be read.
