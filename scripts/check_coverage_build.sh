@@ -4,7 +4,7 @@ set -e
 # appear where expected. Just test one test case for now.
 if [ "X${C_COMPILER}" == "Xgcc" ]; then
   TESTCASE="${BUILD_DIR}/benchmarks/c/examples/simple_branch_non_klee_no_bug.x86_64"
-  COVDIR="`pwd`/simple_branch_non_klee_no_bug.x86_64.cov"
+  COVDIR="`pwd`/profile_data/"
   if [ ! -e "${TESTCASE}" ]; then
     echo "Failed to find \"${TESTCASE}\""
     exit 1
@@ -14,15 +14,9 @@ if [ "X${C_COMPILER}" == "Xgcc" ]; then
     exit 1
   fi
   # Run test case
-  ${TESTCASE}
-  if [ ! -d "${COVDIR}" ]; then
-    echo "\"${COVDIR}\" should exist"
-    set +x
-    ls -l "${BUILD_DIR}"
-    find . -iname '*.gcda'
-    find . -iname '*.gcno'
-    exit 1
-  fi
+  mkdir -p "${COVDIR}"
+  GCOV_PREFIX="${COVDIR}" ${TESTCASE}
+
   # Check that the gcda files are present
   test "$((find ${COVDIR} -type f -iname '*.gcda' || echo '0') | wc -l)" -eq 1
 

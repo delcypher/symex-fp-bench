@@ -252,15 +252,15 @@ endif()
             declStr += "  {}\n".format(macroName)
         declStr += ")\n"
       # Emit compiler flags
-      declStr += "{indent}target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}}".format(
+      declStr += "{indent}target_compile_options({target_name} PRIVATE ${{SVCOMP_STD_{lang_ver}}})\n".format(
         indent = cmakeIndent,
         target_name = targetName,
         lang_ver = lang_ver
       )
       if coverage:
-        # FIXME: Test in CMake if the compiler supports `-fprofile-dir=`
-        declStr +=  " \"-fprofile-dir={profile_dir}.cov\"".format(profile_dir = targetName)
-      declStr += ")\n"
+        # TODO: Potentially remove `coverage` option altogether. Keep for now as we
+        # may need to alter the build in the future.
+        pass
 
       # Emit dependency code that adds necessary dependencies to that target
       for (_, depAddDecl) in dependencyHandlingCMakeDecls:
