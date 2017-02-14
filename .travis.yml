@@ -21,10 +21,11 @@ dist: trusty
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y g++ gcc libc6-dev clang-3.4 doxygen libyaml-dev python-pip python3-pip python python3
-  - sudo pip2 install jsonschema pyyaml
-  - sudo pip3 install jsonschema pyyaml
   # Build script expects clang-3.4 to be the binary name in the path
   - sudo ln -s /usr/bin/clang /usr/bin/clang-3.4
   - sudo ln -s /usr/bin/clang++ /usr/bin/clang++-3.4
+install:
+  - sudo pip2 install -r requirements.txt
+  - sudo pip3 install -r requirements.txt
 script:
   - scripts/travisci-build.sh
