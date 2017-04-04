@@ -5,3 +5,11 @@ else()
   message(WARNING "Can't build svcomp_klee_runtime without KLEE runtime")
 endif()
 
+if (HAS_STD_C11)
+  # Needed for `static_assert()`
+  target_compile_options(svcomp_klee_runtime
+    PRIVATE ${SVCOMP_STD_C11})
+else()
+  message(FATAL_ERROR "C11 is required for SVCOMP runtime")
+endif()
+

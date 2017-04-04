@@ -6,6 +6,7 @@
 // runtime functions that calls into KLEE's runtime functions.
 #include "svcomp/svcomp.h"
 #include "klee/klee.h"
+#include <assert.h>
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -15,8 +16,10 @@
 T __VERIFIER_nondet_ ## NAME() { \
   static uint64_t counter = 0; \
   char name[] = "symbolic_xxxxxxxxxxxxxxxxxxxx_TTTTTTTT"; \
+  const char typeName[] = #NAME ;\
+  static_assert(sizeof(typeName) <= (8 + 1), "Not enough space allocated for name"); \
   char* offsetStr = name + 9; \
-  sprintf(offsetStr, "%" PRIu64 "_%s", counter, #T); \
+  sprintf(offsetStr, "%" PRIu64 "_%s", counter, typeName); \
   T initialValue; \
   klee_make_symbolic(&initialValue, sizeof(T), name); \
   return initialValue; \
