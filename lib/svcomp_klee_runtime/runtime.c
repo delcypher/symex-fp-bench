@@ -51,20 +51,6 @@ void __VERIFIER_assume(int expression) {
   klee_assume(expression);
 }
 
-
-// Provide proto-type to suppress -Werror=implicit-function-declaration
-void __assert_fail(const char*, const char*, unsigned int, const char*);
-
-void __VERIFIER_assert(int expression) {
-  klee_assert(expression);
-}
-
-SVCOMP_NO_RETURN void __VERIFIER_error() {
-  // FIXME: klee_report_error is not implemented in libkleeRuntest.
-  // klee_report_error(__FILE__, __LINE__, "__VERIFIER_error reached","");
-  abort();
-}
-
 // FIXME: We can probably do better than this
 void __VERIFIER_atomic_begin() {
   fprintf(stderr, "__VERIFIER_atomic_begin() is a no-op\n");

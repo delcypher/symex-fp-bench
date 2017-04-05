@@ -14,8 +14,10 @@
  * can be found in ``lib/svcomp_runtime/``, this is just a stub implementation
  * for the build system.
  */
+#include <assert.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h> // For abort()
 
 #ifndef __has_attribute
   #define __has_attribute(x) 0  /* Compatibility with non gcc/clang compilers. */
@@ -110,7 +112,9 @@ void __VERIFIER_assume(int expression);
  *  ```
  *  \param expression The expression to assert
  */
-void __VERIFIER_assert(int expression);
+//void __VERIFIER_assert(int expression);
+// FIXME: This is to get error locations correct in KLEE
+#define __VERIFIER_assert(X) assert(X)
 
 
 /*! \brief For checking (un)reachability.
@@ -126,7 +130,9 @@ void __VERIFIER_assert(int expression);
  * the program terminates.
  *
  */
-SVCOMP_NO_RETURN void __VERIFIER_error();
+//SVCOMP_NO_RETURN void __VERIFIER_error();
+// FIXME: This is to get error locations correct in KLEE
+#define __VERIFIER_error() do { abort(); } while(0)
 
 /*! \brief Begin atomic section
  *
