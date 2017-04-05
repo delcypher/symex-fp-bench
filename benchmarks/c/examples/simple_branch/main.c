@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 int main() {
-  int a;
+  int a = 0;
 #ifdef KLEE
   klee_make_symbolic(&a, sizeof(a), "a");
 #endif
