@@ -60,5 +60,13 @@ variants:
     verification_tasks:
       no_assert_fail:
         correct: false
+        counter_examples:
+          -
+            description: 'An assert can fail when a is 0'
+            locations:
+              -
+                description: 'Failable assertion'
+                file: 'main.c'
+                line: 16
 description: >
   These benchmarks are just simple examples
