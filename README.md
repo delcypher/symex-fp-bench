@@ -12,6 +12,22 @@ In this system each benchmark is placed in its own folder containings
 
 This system of organisation is fork of https://github.com/delcypher/svcomp-build-mockup
 
+## Imperial College and RWTH Aachen benchmarks
+
+<!-- FIXME: Add paper link once available -->
+The benchmarks for our [ASE 2017](FIXME) paper are not in this repository. The reason
+for this is that the benchmarks were developed independently. To include these benchmarks
+in a build do
+
+```
+cd benchmarks
+git clone https://github.com/delcypher/fp-benchmarks-imperial.git imperial
+git clone https://github.com/danielschemmel/fp-benchmarks-aachen aachen
+```
+
+before configuring the build. The build system will automatically detect the presense
+of these directories and build the benchmarks contained within them.
+
 ## Benchmark specification file
 
 This [YAML](http://www.yaml.org/) file contains the relevant information for
