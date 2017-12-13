@@ -40,8 +40,7 @@ if (KLEE_NATIVE_RUNTIME_INCLUDE_DIR)
   message(STATUS "Found KLEE runtime include path: \"${KLEE_NATIVE_RUNTIME_INCLUDE_DIR}\"")
 else()
   message(STATUS "Could not find KLEE runtime include path.\n"
-		"Try setting the KLEE_NATIVE_RUNTIME_INCLUDE_DIR environment variable to the directory"
-    " containing \"include/klee.h\""
+    "Try setting the KLEE_NATIVE_RUNTIME_INCLUDE_DIR environment variable to the KLEE include directory"
   )
 endif()
 
