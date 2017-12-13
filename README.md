@@ -20,7 +20,7 @@ for this is that the benchmarks were developed independently. To include these b
 in a build do
 
 ```
-cd benchmarks
+cd benchmarks/c
 git clone https://github.com/delcypher/fp-benchmarks-imperial.git imperial
 git clone https://github.com/danielschemmel/fp-benchmarks-aachen aachen
 ```
